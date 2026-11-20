@@ -1,0 +1,177 @@
+{
+  "status": "pass",
+  "checks": {
+    "clock_completed": true,
+    "all_sweep_phases_measured": true,
+    "physical_steering_tracks_map": true,
+    "stationary_sweep": true,
+    "scan_received": true,
+    "scan_beams": true,
+    "scan_frame": true,
+    "scan_valid_ranges": true,
+    "scan_period_40hz": true,
+    "scan_geometry": true,
+    "physical_servo_saturation": true
+  },
+  "observations": [
+    {
+      "input_rad": 0.0,
+      "expected_left_right_rad": [
+        0.014211767684555593,
+        0.014052015139654725
+      ],
+      "actual_left_right_rad": [
+        0.014220231212675571,
+        0.014049043878912926
+      ],
+      "max_error_deg": 0.0004849244410650617,
+      "max_chassis_speed_mps": 0.0014009315140566894
+    },
+    {
+      "input_rad": 0.3,
+      "expected_left_right_rad": [
+        0.14787910729923673,
+        0.13232631639745798
+      ],
+      "actual_left_right_rad": [
+        0.14621195197105408,
+        0.130916565656662
+      ],
+      "max_error_deg": 0.09552096409761358,
+      "max_chassis_speed_mps": 0.0009402138882348415
+    },
+    {
+      "input_rad": 0.6,
+      "expected_left_right_rad": [
+        0.29578290326603346,
+        0.240264374786219
+      ],
+      "actual_left_right_rad": [
+        0.2935730218887329,
+        0.23845557868480682
+      ],
+      "max_error_deg": 0.12661687614387893,
+      "max_chassis_speed_mps": 0.0011277405775188308
+    },
+    {
+      "input_rad": 0.85,
+      "expected_left_right_rad": [
+        0.33403506007677053,
+        0.2652279101012497
+      ],
+      "actual_left_right_rad": [
+        0.3321472406387329,
+        0.2636377215385437
+      ],
+      "max_error_deg": 0.10816408628231439,
+      "max_chassis_speed_mps": 0.0009920735325677297
+    },
+    {
+      "input_rad": 0.7,
+      "expected_left_right_rad": [
+        0.33403506007677053,
+        0.2652279101012497
+      ],
+      "actual_left_right_rad": [
+        0.3324071764945984,
+        0.26382163166999817
+      ],
+      "max_error_deg": 0.09327085879710159,
+      "max_chassis_speed_mps": 0.001023227474335621
+    },
+    {
+      "input_rad": 0.0,
+      "expected_left_right_rad": [
+        0.014211767684555593,
+        0.014052015139654725
+      ],
+      "actual_left_right_rad": [
+        0.01668739877641201,
+        0.016544967889785767
+      ],
+      "max_error_deg": 0.14283567110804038,
+      "max_chassis_speed_mps": 0.00131878379136726
+    },
+    {
+      "input_rad": -0.3,
+      "expected_left_right_rad": [
+        -0.10667587073225636,
+        -0.11658405771957513
+      ],
+      "actual_left_right_rad": [
+        -0.10502462834119797,
+        -0.115024134516716
+      ],
+      "max_error_deg": 0.09460921996073644,
+      "max_chassis_speed_mps": 0.0007569883398838453
+    },
+    {
+      "input_rad": -0.6,
+      "expected_left_right_rad": [
+        -0.2167581723483741,
+        -0.26120416833892396
+      ],
+      "actual_left_right_rad": [
+        -0.21500957012176514,
+        -0.2594146132469177
+      ],
+      "max_error_deg": 0.10253395397810294,
+      "max_chassis_speed_mps": 0.0012392342032011541
+    },
+    {
+      "input_rad": -0.85,
+      "expected_left_right_rad": [
+        -0.242173353259073,
+        -0.2986519492437054
+      ],
+      "actual_left_right_rad": [
+        -0.24086055159568787,
+        -0.2970106899738312
+      ],
+      "max_error_deg": 0.09403722925051694,
+      "max_chassis_speed_mps": 0.0019249257928180376
+    },
+    {
+      "input_rad": -0.7,
+      "expected_left_right_rad": [
+        -0.242173353259073,
+        -0.2986519492437054
+      ],
+      "actual_left_right_rad": [
+        -0.24114522337913513,
+        -0.297461599111557
+      ],
+      "max_error_deg": 0.06820203871494371,
+      "max_chassis_speed_mps": 0.0011427660803909434
+    }
+  ],
+  "scans_received": 371,
+  "first_scan": {
+    "stamp": 3.569000001,
+    "frame": "laser",
+    "count": 1081,
+    "angle_min": -2.356194496154785,
+    "angle_max": 2.356194496154785,
+    "increment": 0.004363323096185923,
+    "scan_time": 0.02500000037252903,
+    "time_increment": 1.7361111531499773e-05,
+    "finite_returns": 1081,
+    "minimum": 0.9652523994445801,
+    "maximum": 13.922760009765625,
+    "has_nan": false
+  },
+  "last_scan": {
+    "stamp": 12.819000001,
+    "frame": "laser",
+    "count": 1081,
+    "angle_min": -2.356194496154785,
+    "angle_max": 2.356194496154785,
+    "increment": 0.004363323096185923,
+    "scan_time": 0.02500000037252903,
+    "time_increment": 1.7361111531499773e-05,
+    "finite_returns": 1081,
+    "minimum": 0.9648892879486084,
+    "maximum": 13.927746772766113,
+    "has_nan": false
+  }
+}

@@ -1,0 +1,10 @@
+build/
+__pycache__/
+*.pyc
+outputs/
+.venv/
+ros_ws/build/
+ros_ws/install/
+ros_ws/log/
+calibration/steering/cache/
+calibration/steering/aligned/

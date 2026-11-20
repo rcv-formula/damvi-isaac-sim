@@ -1,0 +1,232 @@
+{
+  "model": "linear",
+  "coefficients_offset_positive_negative": [
+    0.014467018499691101,
+    0.41752363604316256,
+    0.41752363604316256
+  ],
+  "coefficient_block_bootstrap_95pct": [
+    [
+      0.012388027215454723,
+      0.4080560255219328
+    ],
+    [
+      0.01694345019217856,
+      0.42551095312057224
+    ]
+  ],
+  "block_size_s": 2.0,
+  "bootstrap_samples": 200,
+  "selected_samples": 2734,
+  "selected_seconds": 54.68,
+  "source_ini": "/home/shin/Desktop/raceline/Raceline-Optimization/params/f110_rgb.ini",
+  "wheelbase_m": 0.26,
+  "angle_limit_rad": 0.301,
+  "delay_grid": [
+    [
+      0.0010894218902303531,
+      0.0
+    ],
+    [
+      0.000945576956157902,
+      0.01
+    ],
+    [
+      0.0009175580844163667,
+      0.02
+    ],
+    [
+      0.0007543703634918175,
+      0.03
+    ],
+    [
+      0.0007234774349760641,
+      0.04
+    ],
+    [
+      0.0005679238613297532,
+      0.05
+    ],
+    [
+      0.0005648890612104135,
+      0.06
+    ],
+    [
+      0.00045981290099018343,
+      0.07
+    ],
+    [
+      0.0005319204435719645,
+      0.08
+    ],
+    [
+      0.0004829798016716494,
+      0.09
+    ],
+    [
+      0.0005924541021915629,
+      0.1
+    ],
+    [
+      0.0005579475420890513,
+      0.11
+    ],
+    [
+      0.000684947814654792,
+      0.12
+    ],
+    [
+      0.0006580561141682047,
+      0.13
+    ],
+    [
+      0.0007911398615272389,
+      0.14
+    ],
+    [
+      0.0007710104041817092,
+      0.15
+    ],
+    [
+      0.0009099754501548646,
+      0.16
+    ],
+    [
+      0.000909872629308674,
+      0.17
+    ],
+    [
+      0.0010604935554652552,
+      0.18
+    ],
+    [
+      0.0010606557793637478,
+      0.19
+    ],
+    [
+      0.001202913655780128,
+      0.2
+    ],
+    [
+      0.001214629739711592,
+      0.21
+    ],
+    [
+      0.0013634258838909682,
+      0.22
+    ],
+    [
+      0.0013767223506928542,
+      0.23
+    ],
+    [
+      0.0015143004756482659,
+      0.24
+    ],
+    [
+      0.0015411807331097978,
+      0.25
+    ],
+    [
+      0.0016745358367041805,
+      0.26
+    ],
+    [
+      0.0017082468431797928,
+      0.27
+    ],
+    [
+      0.001835187043301395,
+      0.28
+    ],
+    [
+      0.0018639493366986047,
+      0.29
+    ],
+    [
+      0.001972263837520798,
+      0.3
+    ]
+  ],
+  "selected_lag_s": 0.07,
+  "blocked_holdout_rmse_deg": {
+    "linear": 1.4954397289025543,
+    "asymmetric_linear": 1.500703059715899
+  },
+  "overall_rmse_deg": 1.2949291697109544,
+  "identity_mapping_rmse_deg": 8.422973270229084,
+  "per_bag": [
+    {
+      "bag": "0821-1_test_3_0",
+      "total_seconds": 428.0,
+      "speed_accel_selected_s": 58.52,
+      "slip_consistency_selected_s": 42.78,
+      "command_matched_s": 42.74,
+      "selected_samples": 2137,
+      "rmse_deg": 0.9483652244214018,
+      "command_range_rad": [
+        -0.5583044898509979,
+        0.5235987901687622
+      ],
+      "leave_one_bag_out_rmse_deg": 2.1002164257323472
+    },
+    {
+      "bag": "0821_test_2_0",
+      "total_seconds": 39.6,
+      "speed_accel_selected_s": 0.92,
+      "slip_consistency_selected_s": 0.36,
+      "command_matched_s": 0.36,
+      "selected_samples": 18,
+      "rmse_deg": 0.9548657711454274,
+      "command_range_rad": [
+        0.14274531111121153,
+        0.2896192480623746
+      ],
+      "leave_one_bag_out_rmse_deg": 0.9563002882369793
+    },
+    {
+      "bag": "last_14_last_14_0",
+      "total_seconds": 223.24,
+      "speed_accel_selected_s": 4.08,
+      "slip_consistency_selected_s": 3.22,
+      "command_matched_s": 0.0,
+      "selected_samples": 0
+    },
+    {
+      "bag": "last_7_last_7_0",
+      "total_seconds": 510.7,
+      "speed_accel_selected_s": 2.34,
+      "slip_consistency_selected_s": 1.9000000000000001,
+      "command_matched_s": 1.9000000000000001,
+      "selected_samples": 95,
+      "rmse_deg": 1.45633014856422,
+      "command_range_rad": [
+        -0.06699153132736684,
+        0.5332628476619723
+      ],
+      "leave_one_bag_out_rmse_deg": 1.4766527233753852
+    },
+    {
+      "bag": "test_38_test_38_0",
+      "total_seconds": 522.96,
+      "speed_accel_selected_s": 14.68,
+      "slip_consistency_selected_s": 9.8,
+      "command_matched_s": 9.68,
+      "selected_samples": 484,
+      "rmse_deg": 2.2473938902354464,
+      "command_range_rad": [
+        -0.6731734871864319,
+        0.6731734871864319
+      ],
+      "leave_one_bag_out_rmse_deg": 2.3285824735789302
+    }
+  ],
+  "limitations": [
+    "No cmd_vel or wheel angle encoder is recorded. Existing adapter copies cmd_vel.angular.z into Ackermann steering_angle.",
+    "This is a low-slip equivalent angle; residual tire slip and localization/IMU errors cannot be separated from linkage calibration.",
+    "PF position-derived speed is a consistency filter, not independent ground truth.",
+    "Lag includes sensor/vehicle response; it is not applied as an additional servo delay.",
+    "Actual firmware/servo settings may differ across bags; leave-one-bag-out errors quantify transfer.",
+    "The simulation wheelbase remains 0.25 m while the calibration vehicle wheelbase is 0.26 m."
+  ]
+}

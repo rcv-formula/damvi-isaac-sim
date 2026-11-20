@@ -1,0 +1,68 @@
+{
+  "status": "pass",
+  "checks": {
+    "clock_completed": true,
+    "imu_received": true,
+    "imu_frame": true,
+    "imu_finite": true,
+    "imu_unit_orientation": true,
+    "imu_simulated_1khz": true,
+    "imu_stamps_increase": true,
+    "imu_stationary_gravity": true,
+    "imu_stationary_gyro": true,
+    "scan_geometry": true,
+    "scan_simulated_40hz": true,
+    "user_laser_tf": true,
+    "user_imu_tf": true
+  },
+  "imu_samples": 2959,
+  "imu_settled_samples": 2219,
+  "imu_median_period_s": 0.0010000000000047748,
+  "imu_mean_acceleration_mps2": [
+    0.004506476817300522,
+    -0.0006082771622657478,
+    9.809975573645046
+  ],
+  "imu_median_acceleration_mps2": [
+    0.010065713288619889,
+    -1.2569638174466646,
+    9.810137310651355
+  ],
+  "imu_median_gyro_rad_s": [
+    0.007458608285719692,
+    0.005039865224776349,
+    0.00020599091478767676
+  ],
+  "scan_count": 118,
+  "tf": {
+    "laser": {
+      "parent": "base_link",
+      "translation_m": [
+        0.27,
+        0.0,
+        0.16
+      ],
+      "rotation_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "imu": {
+      "parent": "base_link",
+      "translation_m": [
+        0.27,
+        0.0,
+        0.06
+      ],
+      "rotation_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  },
+  "wall_duration_s": 3.601743733997864
+}

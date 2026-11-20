@@ -1,0 +1,37 @@
+/**:
+  ros__parameters:
+    use_sim_time: true
+    rf_topic: /rf
+    rf_hz: 20.0
+    # PP CH9=2000 preserves configured controller gains; co-driver CH10=2000
+    # keeps gap_obs on the fast /drive_gf2 source rather than slow /drive_gf.
+    rf_ch9_value: 2000
+    rf_ch10_value: 2000
+    scan_topic: /scan
+    scan_gap_topic: /scan_gap
+    scan_cloud_topic: /scan_matched_points2
+    map_frame: map
+    deskew_scan: true
+    scan_queue_size: 8
+    scan_queue_timeout_s: 0.2
+    gt_topic: /validation/ground_truth
+    gt_odom_topic: /odom_gt
+    gt_child_frame: base_link_gt
+    odom_topic: /odom
+    path_topic: /selected_path
+    drive_topic: /drive_autonomy
+    autonomy_twist_topic: /autonomy/cmd_vel
+    co_driver_status_topic: /co_driver_node/status
+    command_hz: 50.0
+    speed_cap_mps: 1.2
+    drive_timeout_s: 0.3
+    odom_timeout_s: 0.3
+    scan_timeout_s: 0.3
+    path_timeout_s: 0.5
+    steering_config: /home/shin/Desktop/RC_Car_Isaac/headless_ros/project/damvi_vesc_sim/config/steering.yaml
+    # Explicit fallback values are used only when steering_config is empty.
+    # Failure to read a configured file holds autonomy at zero.
+    steering_gain: 0.4184748463865287
+    steering_bias: 0.014131439965515014
+    steering_input_limit_rad: 0.673076923076923
+    status_path: /home/shin/Desktop/RC_Car_Isaac/headless_ros/project/driving_validation/outputs/support_status.json

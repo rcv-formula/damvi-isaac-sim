@@ -1,0 +1,728 @@
+{
+  "trials": [
+    {
+      "trial": "all_enabled",
+      "wall_s": 4.096104483003728,
+      "sim_s": 1.2330000585643575,
+      "realtime_factor": 0.30101772639846874,
+      "physics_steps": 1233,
+      "render_frames": 74,
+      "components": {
+        "motor": {
+          "calls": 1283,
+          "wall_s": 0.06773864295246312
+        },
+        "steering": {
+          "calls": 1283,
+          "wall_s": 0.012999942882743198
+        },
+        "lidar": {
+          "calls": 1283,
+          "wall_s": 1.0430401150661055
+        },
+        "imu": {
+          "calls": 1283,
+          "wall_s": 0.737504869888653
+        },
+        "ros_vesc_clock": {
+          "calls": 64,
+          "wall_s": 0.0034260719985468313
+        },
+        "ros_spin": {
+          "calls": 77,
+          "wall_s": 0.06954809801391093
+        },
+        "status_files": {
+          "calls": 8,
+          "wall_s": 0.3165554219885962
+        }
+      }
+    },
+    {
+      "trial": "without_lidar",
+      "wall_s": 4.00538864400005,
+      "sim_s": 1.4830000704387203,
+      "realtime_factor": 0.3702512295929658,
+      "physics_steps": 1483,
+      "render_frames": 89,
+      "components": {
+        "motor": {
+          "calls": 1533,
+          "wall_s": 0.07946054006606573
+        },
+        "steering": {
+          "calls": 1533,
+          "wall_s": 0.015181531089183409
+        },
+        "lidar": {
+          "calls": 0,
+          "wall_s": 0.0
+        },
+        "imu": {
+          "calls": 1533,
+          "wall_s": 1.0747858320610248
+        },
+        "ros_vesc_clock": {
+          "calls": 77,
+          "wall_s": 0.0036291419964982197
+        },
+        "ros_spin": {
+          "calls": 92,
+          "wall_s": 0.08409431100153597
+        },
+        "status_files": {
+          "calls": 8,
+          "wall_s": 0.31706234199373284
+        }
+      }
+    },
+    {
+      "trial": "without_imu",
+      "wall_s": 4.0268781170016155,
+      "sim_s": 1.4500000688713044,
+      "realtime_factor": 0.3600804461275734,
+      "physics_steps": 1450,
+      "render_frames": 87,
+      "components": {
+        "motor": {
+          "calls": 1500,
+          "wall_s": 0.0781535980568151
+        },
+        "steering": {
+          "calls": 1500,
+          "wall_s": 0.01515636592375813
+        },
+        "lidar": {
+          "calls": 1500,
+          "wall_s": 1.2259244629967725
+        },
+        "imu": {
+          "calls": 0,
+          "wall_s": 0.0
+        },
+        "ros_vesc_clock": {
+          "calls": 75,
+          "wall_s": 0.0055798310349928215
+        },
+        "ros_spin": {
+          "calls": 90,
+          "wall_s": 0.08897401294234442
+        },
+        "status_files": {
+          "calls": 8,
+          "wall_s": 0.31980312900122954
+        }
+      }
+    },
+    {
+      "trial": "without_both_sensors",
+      "wall_s": 4.019112681002298,
+      "sim_s": 2.2170001053018495,
+      "realtime_factor": 0.5516143191956906,
+      "physics_steps": 2217,
+      "render_frames": 133,
+      "components": {
+        "motor": {
+          "calls": 2267,
+          "wall_s": 0.1194382388930535
+        },
+        "steering": {
+          "calls": 2267,
+          "wall_s": 0.02260114912496647
+        },
+        "lidar": {
+          "calls": 0,
+          "wall_s": 0.0
+        },
+        "imu": {
+          "calls": 0,
+          "wall_s": 0.0
+        },
+        "ros_vesc_clock": {
+          "calls": 113,
+          "wall_s": 0.008539547015971038
+        },
+        "ros_spin": {
+          "calls": 136,
+          "wall_s": 0.12036672196700238
+        },
+        "status_files": {
+          "calls": 8,
+          "wall_s": 0.32051174801017623
+        }
+      }
+    },
+    {
+      "trial": "without_sensors_or_status",
+      "wall_s": 4.007172231998993,
+      "sim_s": 2.400000113993883,
+      "realtime_factor": 0.5989261192291289,
+      "physics_steps": 2400,
+      "render_frames": 144,
+      "components": {
+        "motor": {
+          "calls": 2450,
+          "wall_s": 0.1273430549626937
+        },
+        "steering": {
+          "calls": 2450,
+          "wall_s": 0.024368940154090524
+        },
+        "lidar": {
+          "calls": 0,
+          "wall_s": 0.0
+        },
+        "imu": {
+          "calls": 0,
+          "wall_s": 0.0
+        },
+        "ros_vesc_clock": {
+          "calls": 123,
+          "wall_s": 0.00926092797453748
+        },
+        "ros_spin": {
+          "calls": 147,
+          "wall_s": 0.12828936903679278
+        },
+        "status_files": {
+          "calls": 0,
+          "wall_s": 0.0
+        }
+      }
+    }
+  ],
+  "profile_wall_s": 3.0202871419969597,
+  "profile_top_cumulative": [
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/imu.py",
+      "line": 249,
+      "name": "publish_sample",
+      "calls": 800,
+      "own_s": 0.054264874000000005,
+      "cumulative_s": 0.621241483
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/lidar.py",
+      "line": 118,
+      "name": "range",
+      "calls": 34592,
+      "own_s": 0.44264116800000003,
+      "cumulative_s": 0.55585364
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/numeric.py",
+      "line": 1556,
+      "name": "cross",
+      "calls": 4000,
+      "own_s": 0.08310249800000001,
+      "cumulative_s": 0.265653066
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/live_gui.py",
+      "line": 258,
+      "name": "write_status",
+      "calls": 6,
+      "own_s": 0.000310124,
+      "cumulative_s": 0.24230969100000002
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/kit/python/lib/python3.12/json/__init__.py",
+      "line": 183,
+      "name": "dumps",
+      "calls": 12,
+      "own_s": 6.254000000000001e-05,
+      "cumulative_s": 0.235438466
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/kit/python/lib/python3.12/json/encoder.py",
+      "line": 183,
+      "name": "encode",
+      "calls": 12,
+      "own_s": 0.000494505,
+      "cumulative_s": 0.23537058600000002
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/kit/python/lib/python3.12/json/encoder.py",
+      "line": 205,
+      "name": "iterencode",
+      "calls": 12,
+      "own_s": 0.230246581,
+      "cumulative_s": 0.230263411
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/numeric.py",
+      "line": 1482,
+      "name": "moveaxis",
+      "calls": 12000,
+      "own_s": 0.046982803000000004,
+      "cumulative_s": 0.165314981
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/imu.py",
+      "line": 38,
+      "name": "quaternion_product",
+      "calls": 1600,
+      "own_s": 0.019186855000000003,
+      "cumulative_s": 0.150258039
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/exts/isaacsim.ros2.core/jazzy/rclpy/rclpy/publisher.py",
+      "line": 60,
+      "name": "publish",
+      "calls": 872,
+      "own_s": 0.069596977,
+      "cumulative_s": 0.10345349400000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/numeric.py",
+      "line": 1420,
+      "name": "normalize_axis_tuple",
+      "calls": 24000,
+      "own_s": 0.065432169,
+      "cumulative_s": 0.097057052
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/lidar.py",
+      "line": 47,
+      "name": "beam_geometry",
+      "calls": 639,
+      "own_s": 0.066465593,
+      "cumulative_s": 0.09096459000000001
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/lidar.py",
+      "line": 114,
+      "name": "ignored",
+      "calls": 69184,
+      "own_s": 0.052633158000000006,
+      "cumulative_s": 0.076691825
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.usd.libs-1.0.3+187cf21b.lx64.r.cp312/pxr/Trace/__init__.py",
+      "line": 58,
+      "name": "invoke",
+      "calls": 696,
+      "own_s": 0.00258777,
+      "cumulative_s": 0.057084515
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/imu.py",
+      "line": 238,
+      "name": "_noise",
+      "calls": 4797,
+      "own_s": 0.009690403,
+      "cumulative_s": 0.048827539
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'get' of 'dict' objects>",
+      "calls": 136617,
+      "own_s": 0.046758783000000005,
+      "cumulative_s": 0.046758783000000005
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/linalg/_linalg.py",
+      "line": 2622,
+      "name": "norm",
+      "calls": 4640,
+      "own_s": 0.025869478,
+      "cumulative_s": 0.046388035
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/native.py",
+      "line": 43,
+      "name": "step",
+      "calls": 800,
+      "own_s": 0.033867601000000004,
+      "cumulative_s": 0.045994369
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/exts/isaacsim.ros2.core/jazzy/rclpy/sensor_msgs/msg/_imu.py",
+      "line": 116,
+      "name": "__init__",
+      "calls": 800,
+      "own_s": 0.013076603000000001,
+      "cumulative_s": 0.044614786000000003
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/lib/_index_tricks_impl.py",
+      "line": 344,
+      "name": "__getitem__",
+      "calls": 2400,
+      "own_s": 0.030764772000000003,
+      "cumulative_s": 0.04247559
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.physics.tensors-110.4.4+110.4.0.lx64.r.cp312.u7f4/omni/physics/tensors/frontend_np.py",
+      "line": 67,
+      "name": "get_tensor_desc",
+      "calls": 3200,
+      "own_s": 0.033496882,
+      "cumulative_s": 0.038644175
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/fromnumeric.py",
+      "line": 2477,
+      "name": "any",
+      "calls": 4797,
+      "own_s": 0.007240248,
+      "cumulative_s": 0.035357883
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/imu.py",
+      "line": 241,
+      "name": "_advance_bias",
+      "calls": 800,
+      "own_s": 0.008069461,
+      "cumulative_s": 0.033308448000000004
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/fromnumeric.py",
+      "line": 89,
+      "name": "_wrapreduction_any_all",
+      "calls": 4797,
+      "own_s": 0.011153235000000001,
+      "cumulative_s": 0.028117635000000002
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'reduce' of 'numpy.ufunc' objects>",
+      "calls": 7836,
+      "own_s": 0.027930525,
+      "cumulative_s": 0.027930525
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'startswith' of 'str' objects>",
+      "calls": 71368,
+      "own_s": 0.024802667,
+      "cumulative_s": 0.024802667
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/imu.py",
+      "line": 44,
+      "name": "rotation_vector_quaternion",
+      "calls": 800,
+      "own_s": 0.004566668,
+      "cumulative_s": 0.024456387000000003
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.property.usd-4.9.18+187cf21b/omni/kit/property/usd/usd_property_widget.py",
+      "line": 1270,
+      "name": "_on_usd_changed",
+      "calls": 288,
+      "own_s": 0.006873238,
+      "cumulative_s": 0.021979046000000002
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.manipulator.prim.core-108.0.2+187cf21b/omni/kit/manipulator/prim/core/prim_data_accessor_selector.py",
+      "line": 296,
+      "name": "get_local_transform_SRT",
+      "calls": 96,
+      "own_s": 0.007973215,
+      "cumulative_s": 0.02092526
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/imu.py",
+      "line": 25,
+      "name": "quaternion_matrix",
+      "calls": 800,
+      "own_s": 0.010108218,
+      "cumulative_s": 0.020516383000000003
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.viewport.menubar.render-110.1.1+187cf21b/omni/kit/viewport/menubar/render/renderer_menu_container.py",
+      "line": 338,
+      "name": "_process_change_set",
+      "calls": 48,
+      "own_s": 0.000307266,
+      "cumulative_s": 0.018875916
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.isinstance>",
+      "calls": 69175,
+      "own_s": 0.016237626,
+      "cumulative_s": 0.016237626
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/numeric.py",
+      "line": 1469,
+      "name": "<genexpr>",
+      "calls": 48000,
+      "own_s": 0.010203656,
+      "cumulative_s": 0.015437589000000002
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.property.usd-4.9.18+187cf21b/omni/kit/property/usd/usd_property_widget.py",
+      "line": 1532,
+      "name": "_delayed_dirty_handler",
+      "calls": 288,
+      "own_s": 0.004722612,
+      "cumulative_s": 0.015226315
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.property.transform-1.6.13+187cf21b/omni/kit/property/transform/scripts/transform_widget.py",
+      "line": 144,
+      "name": "_on_usd_changed",
+      "calls": 48,
+      "own_s": 0.010185733,
+      "cumulative_s": 0.015208142000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'all' of 'numpy.ndarray' objects>",
+      "calls": 2400,
+      "own_s": 0.0032401450000000003,
+      "cumulative_s": 0.015049310000000002
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method numpy.asarray>",
+      "calls": 22880,
+      "own_s": 0.015003978000000001,
+      "cumulative_s": 0.015003978000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.physics.tensors-110.4.4+110.4.0.lx64.r.cp312.u7f4/omni/physics/tensors/api.py",
+      "line": 1673,
+      "name": "get_dof_velocities",
+      "calls": 1600,
+      "own_s": 0.012972601,
+      "cumulative_s": 0.012972601
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.manipulator.prim.usd-107.0.3+187cf21b/omni/kit/manipulator/prim/usd/data_accessor.py",
+      "line": 290,
+      "name": "get_local_transform_SRT",
+      "calls": 96,
+      "own_s": 0.002721715,
+      "cumulative_s": 0.012880186
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'add' of 'set' objects>",
+      "calls": 17353,
+      "own_s": 0.012214543000000001,
+      "cumulative_s": 0.012214543000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/_methods.py",
+      "line": 66,
+      "name": "_all",
+      "calls": 2400,
+      "own_s": 0.002366772,
+      "cumulative_s": 0.011809165
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.len>",
+      "calls": 82139,
+      "own_s": 0.011290249,
+      "cumulative_s": 0.011440486000000001
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/native.py",
+      "line": 40,
+      "name": "erpm",
+      "calls": 1600,
+      "own_s": 0.003582857,
+      "cumulative_s": 0.011344873
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method numpy.array>",
+      "calls": 12802,
+      "own_s": 0.010615965000000002,
+      "cumulative_s": 0.010615965000000002
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method math.isfinite>",
+      "calls": 71585,
+      "own_s": 0.010151849000000001,
+      "cumulative_s": 0.010151849000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/einsumfunc.py",
+      "line": 1057,
+      "name": "einsum",
+      "calls": 1278,
+      "own_s": 0.0011452,
+      "cumulative_s": 0.009947699
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.usd-1.19.11+187cf21b.lx64.r.cp312/omni/usd/_impl/utils.py",
+      "line": 1058,
+      "name": "get_local_transform_SRT",
+      "calls": 96,
+      "own_s": 0.009116806,
+      "cumulative_s": 0.009783006
+    },
+    {
+      "file": "/home/shin/Desktop/RC_Car_Isaac/vesc_sim/steering.py",
+      "line": 41,
+      "name": "step",
+      "calls": 800,
+      "own_s": 0.007961778000000001,
+      "cumulative_s": 0.009492718
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/exts/isaacsim.ros2.core/jazzy/rclpy/std_msgs/msg/_header.py",
+      "line": 86,
+      "name": "__init__",
+      "calls": 834,
+      "own_s": 0.0039118140000000004,
+      "cumulative_s": 0.009186406000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/semantics.schema.property-2.0.2/semantics/schema/property/semantics_widget.py",
+      "line": 122,
+      "name": "_on_usd_changed",
+      "calls": 48,
+      "own_s": 0.003468781,
+      "cumulative_s": 0.008829264
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method numpy._core._multiarray_umath.c_einsum>",
+      "calls": 1278,
+      "own_s": 0.008802499,
+      "cumulative_s": 0.008802499
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.sorted>",
+      "calls": 12000,
+      "own_s": 0.008698905,
+      "cumulative_s": 0.008698905
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.usd-1.19.11+187cf21b.lx64.r.cp312/omni/usd/_impl/watcher.py",
+      "line": 66,
+      "name": "__async_pump",
+      "calls": 48,
+      "own_s": 0.000146407,
+      "cumulative_s": 0.008422932000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.usd-1.19.11+187cf21b.lx64.r.cp312/omni/usd/_impl/watcher.py",
+      "line": 70,
+      "name": "pump",
+      "calls": 48,
+      "own_s": 0.000822143,
+      "cumulative_s": 0.008276525
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method numpy.lib.array_utils.normalize_axis_index>",
+      "calls": 36000,
+      "own_s": 0.008120971000000001,
+      "cumulative_s": 0.008120971000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'dot' of 'numpy.ndarray' objects>",
+      "calls": 4001,
+      "own_s": 0.007948872000000001,
+      "cumulative_s": 0.007948872000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.kit.pip_archive-0.0.0+187cf21b.lx64.cp312/pip_prebundle/numpy/_core/fromnumeric.py",
+      "line": 2241,
+      "name": "clip",
+      "calls": 639,
+      "own_s": 0.0024937260000000004,
+      "cumulative_s": 0.007894383000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.sum>",
+      "calls": 1600,
+      "own_s": 0.007762016,
+      "cumulative_s": 0.007762016
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/extscache/omni.usd-1.19.11+187cf21b.lx64.r.cp312/omni/usd/_impl/watcher.py",
+      "line": 84,
+      "name": "_dispatch_changed",
+      "calls": 2112,
+      "own_s": 0.00300972,
+      "cumulative_s": 0.007454382000000001
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/exts/isaacsim.ros2.core/jazzy/rclpy/geometry_msgs/msg/_vector3.py",
+      "line": 87,
+      "name": "__init__",
+      "calls": 1600,
+      "own_s": 0.004862478,
+      "cumulative_s": 0.0068067710000000005
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/exts/isaacsim.ros2.core/jazzy/rclpy/rclpy/waitable.py",
+      "line": 37,
+      "name": "__add__",
+      "calls": 864,
+      "own_s": 0.003189358,
+      "cumulative_s": 0.006728762
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method _ctypes.byref>",
+      "calls": 16800,
+      "own_s": 0.006700480000000001,
+      "cumulative_s": 0.006700480000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'astype' of 'numpy.ndarray' objects>",
+      "calls": 8000,
+      "own_s": 0.006592854,
+      "cumulative_s": 0.006592854
+    },
+    {
+      "file": "/home/shin/isaac_sim_6_2/exts/isaacsim.ros2.core/jazzy/rclpy/geometry_msgs/msg/_quaternion.py",
+      "line": 114,
+      "name": "__init__",
+      "calls": 800,
+      "own_s": 0.004266483000000001,
+      "cumulative_s": 0.006146260000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'transpose' of 'numpy.ndarray' objects>",
+      "calls": 12000,
+      "own_s": 0.006003331000000001,
+      "cumulative_s": 0.006003331000000001
+    }
+  ],
+  "settings": {
+    "/app/runLoops/main/rateLimitEnabled": false,
+    "/app/runLoops/main/rateLimitFrequency": 120,
+    "/app/player/useFixedTimeStepping": false,
+    "/persistent/simulation/minFrameRate": 30,
+    "/physics/minFrameRate": null,
+    "/physics/sceneMultiGPUMode": 0,
+    "/app/asyncRendering": false
+  },
+  "config_physics_hz": 1000,
+  "timeline_target_framerate": 60.0
+}

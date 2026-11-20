@@ -1,0 +1,34 @@
+// Apply LAST after localization_scoring.jsonc and obstacle_scoring.jsonc.
+// The simulator already publishes ERPM = wheel speed [m/s] * 1538.
+// Its calibration has no legacy real-car 2.6 wheel-speed correction.
+// RF CH10=2000 selects the fast obstacle controller /drive_gf2;
+// CH10=1000 explicitly shares the slow localization controller /drive_gf.
+{
+  "inputs": {
+    "obstacles": {
+      "params": {
+        "speed_to_erpm_gain": 1538.0,
+        "speed_to_erpm_offset": 0.0,
+        "wheel_speed_scale": 1.0,
+        "wheelbase": 0.25,
+        "vehicle_half_width": 0.1353
+      }
+    },
+    "clearance": {
+      "params": {
+        "speed_to_erpm_gain": 1538.0,
+        "speed_to_erpm_offset": 0.0,
+        "wheel_speed_scale": 1.0,
+        "wheelbase": 0.25,
+        "vehicle_half_width": 0.1353
+      }
+    }
+  },
+  "drives": {
+    "gap_obs": {
+      "runtime_topic_switch": {
+        "alternate_topic": "/drive_gf"
+      }
+    }
+  }
+}

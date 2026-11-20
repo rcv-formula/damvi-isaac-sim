@@ -1,0 +1,22 @@
+{
+  "status": "pass",
+  "checks": {
+    "reread_on_play": true,
+    "controller_recreated": true,
+    "steering_recreated": true,
+    "lidar_publisher_recreated": true,
+    "lidar_config_loaded": true,
+    "imu_publisher_recreated": true,
+    "tf_publisher_recreated": true,
+    "shared_tf_loaded": true,
+    "physics_200hz": true,
+    "imu_1khz_interpolated": true,
+    "wall_clock_loop": true,
+    "gain_loaded": true,
+    "no_custom_ui": true,
+    "ros_connected": true,
+    "no_error": true,
+    "live_articulation": true
+  },
+  "config": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/vesc_sim.yaml"
+}

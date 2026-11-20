@@ -1,0 +1,8 @@
+# Startup tables for multi-map validation. The live PF still scores the actual
+# 1081-beam scan using its configured beam stride and original occupancy grid.
+localization_pf:
+  ros__parameters:
+    # RayMarching samples all free cell centers. 180 rays give 2-degree spacing.
+    relocalization.ray_count: 180
+    observability.grid_step_m: 0.5
+    observability.heading_bins: 16

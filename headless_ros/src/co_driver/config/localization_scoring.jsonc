@@ -1,0 +1,154 @@
+// How the localization score is computed - the scorers' own parameters.
+//
+// Deep-merged over co_driver_red_damvi_topics.jsonc at load (`tuning_file`
+// parameter). Only scorer behaviour lives here; the arbitration layer -
+// weights, bias, response curves, veto placement - is co_driver's and stays
+// in the topics file. Reload without restarting:
+//
+//   ros2 service call /co_driver_node/reload std_srvs/srv/Trigger
+{
+  "inputs": {
+    "localization": {
+      "params": {
+        // raw units -> [0,1]; the producer already emits [0,1]
+        "input_min": 0.0,
+        "input_max": 1.0,
+        "invert": false,
+        // publisher runs at 100 Hz -> 20 periods
+        "timeout_ms": 200,
+        // dead topic = confidence 0 (a silent localization IS a failed one)
+        "on_missing": "value",
+        "default_score": 0.0,
+        // Exclude the obstacle meter from the score as well as from the trip.
+        // term_skip counts beams masked out as unexplained - unmapped or
+        // dynamic obstacles - and the producer masks them BEFORE scoring, so
+        // the pose terms stay at 1.000 through heavy occlusion. It can reach
+        // 0.00 with a vehicle alongside, which takes the aggregate to 0.00 and
+        // would collapse pp_main's logit while the pose is perfectly good.
+        // The reported value becomes
+        //     state_multiplier x min(terms except term_skip)
+        // so real mismatch still lands: the producer drops the whole beam mask
+        // once >50% of beams disagree, and term_score/term_outlier fall with it.
+        "ignore_terms": ["term_skip"]
+      }
+    },
+
+    "loc_state": {
+      // latched topic, republished on transitions only -> staleness off
+      "params": {"timeout_ms": 0}
+    },
+
+    "loc_trip": {
+      // Early handover: confidence < trip_below sustained trip_ms disqualifies
+      // pp_main. This is where "detect earlier" lives - the user's 0.50.
+      //   trip_below 0.40 : the score pathway only fires at 0.171; this bar
+      //                     catches the quiet degradations the curve
+      //                     saturation hides.
+      //
+      //                     Set from the 0813 real-vehicle recording, not
+      //                     guessed. That run (dynamic and static obstacles,
+      //                     deliberate lidar occlusion, 67 s) bottomed out at
+      //                     an effective confidence of 0.5006 - six ten
+      //                     thousandths above the 0.50 this used to be, with
+      //                     term_spread as the limiter, which ignore_terms
+      //                     does not and must not exclude. Healthy driving on
+      //                     the user's own course therefore reaches into the
+      //                     0.50-0.55 band (p0.1 = 0.522, p1 = 0.612).
+      //
+      //                     0.40 buys 0.10 of margin at no measured cost in
+      //                     detection: across four replay scenes and the
+      //                     vehicle recording, no genuine fault ever sat in
+      //                     0.40-0.50. Real faults collapse to 0.00-0.19 and
+      //                     reach Lost within ~30 ms, where the state veto
+      //                     takes over in 7-19 ms.
+      //   trip_ms 500     : a momentary dip proves nothing (confidence is
+      //                     noisy even when the pose is right); only a
+      //                     sustained stay below the bar is a degradation.
+      //                     Tolerance lives HERE, not in lowering the bar.
+      //
+      // Status of this trip, stated plainly: across all four replay scenes
+      // (38k Tracking samples) plus the 0813 vehicle recording it fires ZERO
+      // times with ignore_terms applied.
+      // The longest stretch of genuinely degraded pose terms in the corpus is
+      // 90 ms - when localization goes wrong there it collapses and the state
+      // machine declares Lost within ~30 ms, which the state veto already
+      // handles in 7-19 ms. So the trip is an untested safety net, aimed at
+      // the "quietly wrong for a long time" case the user observed on a
+      // perceptually aliased course but which no recorded dataset contains.
+      // Judge it against that course when it is recorded; do not read the
+      // corpus silence as validation. (Before ignore_terms the same trip fired
+      // 11 times across the corpus - every one of them occlusion, not error.)
+      //   clear_ms 2500   : the trip releases only after confidence has been
+      //                     back above the bar for this long - time verifies
+      //                     the recovery too, mirroring the recovery latch.
+      //   ignore_terms    : judge min(remaining terms) instead of the
+      //                     aggregate. term_skip counts beams masked out as
+      //                     unexplained - i.e. how much unmapped or dynamic
+      //                     obstacle is in view - and the producer masks
+      //                     those beams BEFORE scoring, so term_score and
+      //                     term_outlier stay at 1.000 right through heavy
+      //                     occlusion. Judging the aggregate therefore hands
+      //                     the car over whenever another vehicle drives
+      //                     alongside (measured: two spurious handovers on a
+      //                     busan2 replay with every pose term at 1.000).
+      //                     Excluding it is safe because the producer discards
+      //                     the whole mask once >50% of beams disagree, and
+      //                     from there term_score/term_outlier collapse
+      //                     together - real mismatch is still caught. Only
+      //                     applies when the producer publishes the 8-slot
+      //                     array; older 3-slot ones keep using the aggregate.
+      "params": {
+        "trip_below": 0.40,
+        "trip_ms": 500,
+        "clear_ms": 2500,
+        "timeout_ms": 300,
+        "ignore_terms": ["term_skip"]
+      }
+    },
+
+    "recovery": {
+      // Return latch, anchored at the global-search ATTACH (Lost->Converging
+      // entry), not at full convergence. The verification is the dwell plus
+      // the confidence bar together: measured over 17 attaches, a wrong one
+      // decays (0.466 -> 0.38 @1s -> 0.29 @2s, dead at 2.8 s) and breaks the
+      // hold at ~1.4 s, while correct ones sit flat at 0.48+.
+      //
+      //   min_state 1        : attached (Converging) is enough - no waiting
+      //                        for Tracking (attach->Tracking median is 3.5 s,
+      //                        up to 12.4 s, so this halves the return time)
+      //   min_confidence 0.35: the working range is 0.25-0.35. Both edges are
+      //                        load-bearing:
+      //                        - do NOT raise it: Converging confidence is
+      //                          capped at 0.5 x dominant hypothesis mass, so
+      //                          a bar >= ~0.45 can never be met before
+      //                          Tracking and the attach anchor silently dies
+      //                          (a 0.50 setting pinned a test car on
+      //                          gap_follow; the node now warns about this).
+      //                        - do NOT lower it much: the dwell alone cannot
+      //                          reject a bad attach (one survived 2.8 s);
+      //                          this bar is what catches the decay.
+      //                        On a perceptually aliased course (symmetric
+      //                        sections), even a CORRECT attach sits at
+      //                        conf <= 0.5 x mass (balanced twins -> <= 0.25)
+      //                        until the hypotheses are discriminated, so the
+      //                        car stays on gap_follow through the ambiguity.
+      //                        That is intended: an undiscriminated twin means
+      //                        the raceline may be the worst possible path.
+      //                        Matches in_max in the topics file - keep them
+      //                        in step.
+      //   hold_ms 2500       : the measured bad attach breaks the hold at
+      //                        ~1.4 s; 2.5 s adds margin over the single
+      //                        recorded sample (n=1 - be conservative).
+      //   ignore_terms    : same exclusion as the score input and the trip, so
+      //                     persistent occlusion cannot strand the car on the
+      //                     fallback for as long as an obstacle is in view.
+      "params": {
+        "min_state": 1,
+        "min_confidence": 0.35,
+        "hold_ms": 2500,
+        "confidence_timeout_ms": 300,
+        "ignore_terms": ["term_skip"]
+      }
+    }
+  }
+}

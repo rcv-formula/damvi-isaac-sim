@@ -1,0 +1,20 @@
+{
+  "status": "pass",
+  "checks": {
+    "new_api_used": true,
+    "finite_mask_equal": true,
+    "infinite_signs_equal": true,
+    "ranges_match": true
+  },
+  "rays": 1087,
+  "self_test_rays": 6,
+  "maximum_range_difference_m": 0.0,
+  "median_query_wall_s": {
+    "physx": 0.012063461996149272,
+    "physics_core": 0.0053807860022061504
+  },
+  "decoded_core_hit": {
+    "collision": "/World/TrackEnvironment/Walls/Tube_0002",
+    "rigid_body": "/World/TrackEnvironment/Walls/Tube_0002"
+  }
+}

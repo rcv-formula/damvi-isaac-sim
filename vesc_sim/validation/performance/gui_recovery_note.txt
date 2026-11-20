@@ -1,0 +1,1 @@
+The in-process PhysX internal-dispatcher worker-count trial stopped responding at MBP/threads=1/dispatcher=true. Original asset remains on disk; rebuilding the same GUI from that asset and project configuration.

@@ -1,0 +1,141 @@
+# co_driver base settings.
+#
+# Everything with a fixed number of entries lives here (yaml); the lists that
+# keep growing - input topics (inputs), /drive topics (drives), and the
+# influence matrix between them - live in the JSON that topics_file points to.
+#
+#   yaml : output / evaluation / scoring / selection / postprocess
+#   json : inputs[] / drives[]        <- touch only this when adding a topic
+#
+# All time values are in **ms** and the keys end in _ms (rates end in _hz).
+#
+# Sensor topics (scan/map/imu/odom etc.) are not listed here. Each scorer
+# (src/scorers/) subscribes to what it needs itself; the topic names it needs
+# go in inputs[].params of the topic list JSON.
+#
+# The top-level key is the wildcard `/**`, so adding a namespace or renaming
+# the node cannot make this file get silently ignored.
+/**:
+  ros__parameters:
+    use_sim_time: false
+
+    # Input/drive topic list JSON. The launch file fills this in.
+    # When running the node directly, put an absolute path here.
+    topics_file: ""
+
+    # =====================================================================
+    # Output - the navigation input of ackermann_mux ("drive" in the
+    # f1tenth_stack mux.yaml). Publishing here keeps the joystick override
+    # (priority 100) and the mux timeout alive.
+    # =====================================================================
+    output:
+      drive_topic: "/drive"
+      frame_id: "base_link"
+      rate_hz: 100.0
+      publish_status: True
+
+    evaluation:
+      # Scoring may run slower than the output. Lower this if you attach a
+      # heavy scorer.
+      rate_hz: 50.0
+
+    # Change the default influence for every (drive x input) pair in one place.
+    # If omitted, the built-in default (weight 0, purely linear) is used, so
+    # this is usually left out.
+    # defaults:
+    #   influence: {weight: 0.0, exp_mix: 0.0, exp_k: 3.0}
+
+    # =====================================================================
+    # Score combination = one linear layer (MLP) + softmax
+    #
+    #   z_j = sum_i W[j][i] * phi_ji(x_i) + b_j   W = influence.weight, b = drives[].bias
+    #   p   = softmax(z / temperature)
+    #
+    # W may be negative (penalty terms).
+    #   temperature : lower = winner-take-all (switch-happy), higher = flatter (sluggish)
+    #   missing     : how to handle inputs that cannot judge. "mask" = rescale
+    #                 over the remaining terms (recommended),
+    #                 "zero" = add phi=0 as-is (pure MLP)
+    #   ema_alpha   : low pass on z, before the softmax. 1.0 = no filter
+    #
+    # A normalized weighted average is also available instead of softmax
+    # (negative weights are treated as 0 in that case):
+    #   combine: "weighted_sum"
+    # =====================================================================
+    scoring:
+      combine: "softmax"
+      temperature: 1.0
+      missing: "mask"
+      ema_alpha: 0.4
+      min_valid_score: 0.0
+
+    # =====================================================================
+    # Selection policy
+    # With combine: softmax the scores are probabilities, so switch_margin is
+    # a "probability difference" too. (With N drives the uniform state is 1/N;
+    # use that as the reference point.)
+    # =====================================================================
+    selection:
+      switch_margin: 0.10
+      switch_cooldown_ms: 500    # no second switch within this window after a switch
+      # Preferred drive when nothing clears min_valid_score; a name from the
+      # JSON drives. Not the last thing tried - see last_resort below.
+      fallback: "pp_main"
+
+      # With EVERY drive failing a gate, drive the freshest command still
+      # arriving instead of stopping the car. Off here, on deliberately in
+      # co_driver_red_damvi.yaml - it trades a controlled stop for driving a
+      # command whose gate is unhappy, which is a decision about a particular
+      # vehicle rather than a default.
+      #
+      # It only steps over gates marked "last_resort_ok": true in the topics
+      # file, so a gate that means "this command drives at something" still
+      # stops the car. It cannot revive a dead topic either: freshness is
+      # required, so silence from everything still stops through timeout_stop.
+      last_resort: false
+
+    # =====================================================================
+    # Post-processing - the pipeline list is the order of application.
+    # To drop a stage, remove it from the list; to use the same type twice,
+    # give the blocks different names and set type explicitly in each.
+    #
+    # Note: to disable post-processing entirely, delete the whole postprocess
+    #       block. An empty list like `pipeline: []` has no type as a ROS
+    #       parameter and the node fails to start (this applies to yaml in general).
+    # =====================================================================
+    postprocess:
+      pipeline: ["timeout_stop", "switch_blend", "rate_limit", "speed_scale", "deadband", "clamp"]
+
+      # Safe stop when no drive is usable. Kept first so the decel command
+      # passes through the later stages.
+      timeout_stop:
+        decel: 12.0          # m/s^2. <= 0 means stop immediately
+        hold_steer: True
+
+      # Melts the jump at the moment of a drive switch
+      switch_blend:
+        duration_ms: 250.0   # blend length
+        curve: "smooth"      # linear | smooth | ema
+        ema_alpha: 0.2       # only used with curve: ema
+
+      rate_limit:
+        max_steer_rate_deg: 400.0
+        max_accel: 6.0
+        max_decel: 12.0
+
+      # At runtime: ros2 param set /co_driver_node postprocess.speed_scale.scale 0.5
+      # A handback speed-hold model snapshots this value when it publishes the
+      # request. Change it between hold sessions; a mid-request change is not
+      # recomputed and invalidates the conditional steady-time estimate.
+      speed_scale:
+        scale: 1.0
+
+      deadband:
+        speed: 0.05
+        steer_deg: 0.3
+
+      # Absolute limits. Kept last so no earlier stage can exceed them.
+      clamp:
+        max_steering_deg: 50.0   # matched to PPcontroller's steering_limit
+        max_speed: 8.0
+        min_speed: 0.0           # no reverse. Set negative to allow reverse

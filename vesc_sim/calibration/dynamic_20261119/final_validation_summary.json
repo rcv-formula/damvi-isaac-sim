@@ -1,0 +1,132 @@
+{
+  "replay_comparisons": [
+    {
+      "window": "val_high_0821",
+      "physics_pass": true,
+      "speed_comparable": true,
+      "samples": 99,
+      "baseline_yaw_rmse_rad_s": 0.38074884266025716,
+      "calibrated_yaw_rmse_rad_s": 0.13307954692441137,
+      "speed_match_fraction": 1.0
+    },
+    {
+      "window": "val_low_last14",
+      "physics_pass": true,
+      "speed_comparable": true,
+      "samples": 144,
+      "baseline_yaw_rmse_rad_s": 0.2908533746015486,
+      "calibrated_yaw_rmse_rad_s": 0.0842431835694063,
+      "speed_match_fraction": 1.0
+    },
+    {
+      "window": "val_low_test38",
+      "physics_pass": true,
+      "speed_comparable": false,
+      "samples": 148,
+      "baseline_yaw_rmse_rad_s": 0.2776566045459041,
+      "calibrated_yaw_rmse_rad_s": 0.20104506338836106,
+      "speed_match_fraction": 0.5743243243243243
+    },
+    {
+      "window": "val_mid_0821",
+      "physics_pass": true,
+      "speed_comparable": true,
+      "samples": 146,
+      "baseline_yaw_rmse_rad_s": 0.5701741398651455,
+      "calibrated_yaw_rmse_rad_s": 0.13928692442386714,
+      "speed_match_fraction": 1.0
+    },
+    {
+      "window": "val_very_high_test38",
+      "physics_pass": true,
+      "speed_comparable": true,
+      "samples": 96,
+      "baseline_yaw_rmse_rad_s": 0.2655845322659383,
+      "calibrated_yaw_rmse_rad_s": 0.2124750953472072,
+      "speed_match_fraction": 0.8958333333333334
+    }
+  ],
+  "aggregate_speed_comparable": {
+    "baseline_yaw_rmse_rad_s": 0.40808716276685697,
+    "calibrated_yaw_rmse_rad_s": 0.14317295204540034
+  },
+  "aggregate_samples": 485,
+  "circle_comparisons": [
+    {
+      "speed_mps": 0.8,
+      "surface_coefficient": 0.5231599,
+      "isolated_GT_feedback": true,
+      "baseline": {
+        "status": "pass",
+        "inward_overshoot_m": 0.028654705190206187,
+        "late_cross_track_rmse_m": 0.002537898657908922,
+        "median_body_speed_mps": 0.7969068769598335
+      },
+      "calibrated": {
+        "status": "pass",
+        "inward_overshoot_m": 0.02627915821810234,
+        "late_cross_track_rmse_m": 0.0009422636261471014,
+        "median_body_speed_mps": 0.7973101955984587
+      }
+    },
+    {
+      "speed_mps": 3.0,
+      "surface_coefficient": 0.5377581441296462,
+      "isolated_GT_feedback": true,
+      "baseline": {
+        "status": "pass",
+        "inward_overshoot_m": 0.0509201072484089,
+        "late_cross_track_rmse_m": 0.01785418887847505,
+        "median_body_speed_mps": 2.9893994034548643
+      },
+      "calibrated": {
+        "status": "pass",
+        "inward_overshoot_m": 0.05956109651230079,
+        "late_cross_track_rmse_m": 0.020639641316104712,
+        "median_body_speed_mps": 2.9912450369385013
+      }
+    },
+    {
+      "speed_mps": 6.0,
+      "surface_coefficient": 0.5231599,
+      "isolated_GT_feedback": true,
+      "baseline": {
+        "status": "pass",
+        "inward_overshoot_m": 0.135565493087487,
+        "late_cross_track_rmse_m": 0.01296566578720329,
+        "median_body_speed_mps": 5.990520912325563
+      },
+      "calibrated": {
+        "status": "pass",
+        "inward_overshoot_m": 0.08729270978958326,
+        "late_cross_track_rmse_m": 0.07447365469623765,
+        "median_body_speed_mps": 5.973516450320668
+      }
+    },
+    {
+      "speed_mps": 8.0,
+      "surface_coefficient": 0.5377581441296462,
+      "isolated_GT_feedback": true,
+      "baseline": {
+        "status": "pass",
+        "inward_overshoot_m": 0.180805276534155,
+        "late_cross_track_rmse_m": 0.022592519872335366,
+        "median_body_speed_mps": 7.98582375285329
+      },
+      "calibrated": {
+        "status": "pass",
+        "inward_overshoot_m": 0.014972157065756164,
+        "late_cross_track_rmse_m": 0.14495205699410924,
+        "median_body_speed_mps": 7.945823472667595
+      }
+    }
+  ],
+  "physics_hz": 200,
+  "unit_tests_passed": 181,
+  "limitations": [
+    "Low test38 has a historical motor/current-response difference and fails the speed-match criterion.",
+    "Circle tests isolate plant/controller behavior using measured simulator pose; they are not a full ROS/PF-stack test.",
+    "The 3 m/s inward overshoot rises slightly, and high-speed steady outward path bias remains.",
+    "Surface coefficients are effective response estimates; 0821 has only three independent training blocks."
+  ]
+}

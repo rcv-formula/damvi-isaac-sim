@@ -1,0 +1,50 @@
+{
+  "status": "pass",
+  "checks": {
+    "clock_completed": true,
+    "all_phases": true,
+    "forward_erpm": true,
+    "reverse_erpm": true,
+    "forward_left_yaw": true,
+    "reverse_right_yaw": true,
+    "physical_translation": true,
+    "stopped": true,
+    "steering_tracks_under_load": true,
+    "scan_while_driving": true,
+    "scan_period_40hz": true,
+    "no_gui_error": true,
+    "imu_matches_turning": true
+  },
+  "phases": {
+    "forward": {
+      "samples": 22,
+      "median_erpm": 1137.318108737316,
+      "median_speed_mps": 0.7292328014888889,
+      "median_yaw_rate_rad_s": 0.3866221308708191,
+      "max_steering_error_deg": 0.5935345463663678,
+      "median_imu_gyro_z_rad_s": 0.38728787332798464
+    },
+    "reverse": {
+      "samples": 22,
+      "median_erpm": -1140.267564382925,
+      "median_speed_mps": 0.7320848259903172,
+      "median_yaw_rate_rad_s": -0.4072055220603943,
+      "max_steering_error_deg": 0.42682116777370926,
+      "median_imu_gyro_z_rad_s": -0.408376384985017
+    },
+    "stop": {
+      "samples": 22,
+      "median_erpm": 0.05258703151486464,
+      "median_speed_mps": 0.0027496305552111786,
+      "median_yaw_rate_rad_s": -0.0020487880101427436,
+      "max_steering_error_deg": 0.124270256448593,
+      "median_imu_gyro_z_rad_s": -0.0015459083547632074
+    }
+  },
+  "scans_received": 279,
+  "stop_measurement_delay_s": [
+    3.0,
+    3.45
+  ],
+  "wall_duration_s": 7.2093342850057525
+}

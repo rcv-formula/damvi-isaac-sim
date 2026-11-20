@@ -1,0 +1,32 @@
+[
+  {
+    "viewport_resolution": [
+      1600,
+      1000
+    ],
+    "wall_s": 5.007551784998213,
+    "sim_s": 4.334999903105199,
+    "realtime_factor": 0.8656924759304803,
+    "frames": 260
+  },
+  {
+    "viewport_resolution": [
+      1280,
+      720
+    ],
+    "wall_s": 5.013188616001571,
+    "sim_s": 4.56999989785254,
+    "realtime_factor": 0.9115954431208874,
+    "frames": 274
+  },
+  {
+    "viewport_resolution": [
+      1024,
+      640
+    ],
+    "wall_s": 5.03527106600086,
+    "sim_s": 4.034999909810722,
+    "realtime_factor": 0.8013471086106634,
+    "frames": 242
+  }
+]

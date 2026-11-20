@@ -1,0 +1,51 @@
+# Upstream gap_follow source is unchanged; this is the gap_loc instance.
+# The executable automatically declares every parameter from overrides.
+# Input /scan_gap must be a Reliable relay of simulator /scan (BestEffort).
+# default_qos is queue depth, not a reliability selector.
+# Steering output is an equivalent physical front-wheel angle in radians.
+# Conversion to the measured simulator steering command happens only in the
+# final command bridge. max_steering_angle is configured in degrees here.
+# The upstream emergency behavior retains minimum_crawl_speed, not zero.
+/**:
+  ros__parameters:
+    gap_width_preference: 0.4
+    gap_score_distance_cap: 5.0
+    ambiguous_gap_score_margin: 1.8
+    ambiguous_gap_opposite_weight: 2.0
+    max_steering_angle: 14.896902673401405
+    steering_smooth_window: 3
+    speed_factor: 0.2
+    max_speed: 0.7
+    narrow_gap_max_speed: 0.6
+    minimum_crawl_speed: 0.6
+    speed_increase_start: 3.0
+    speed_increase_end: 15.0
+    speed_increase_factor: 1.5
+    min_acceleration: 0.5
+    max_acceleration: 6.0
+    max_deceleration: 6.0
+    friction: 0.75
+    wheel_base: 0.25
+    vehicle_radius: 0.1353
+    lidar_offset_x: 0.27
+    lidar_offset_y: 0.0
+    gap_safety_margin: 0.1
+    gap_fallback_distance: 0.4
+    path_check_angle: 30.0
+    safety_level: 0.8
+    obstacle_edge_threshold: 0.15
+    scan_filter_window: 5
+    max_scan_angle: 90.0
+    emergency_stop_distance: 0.4
+    trajectory_check_distance: 1.0
+    trajectory_check_step: 0.05
+    trajectory_safety_margin: 0.05
+    initial_update_time: 0.05
+    default_qos: 1
+    debug: false
+    lidar_scan_topic: /scan_gap
+    drive_topic: /drive_gf
+    target_waypoint_topic: /gap_loc/target_waypoint
+    debug_marker_topic: /gap_loc/debug_markers
+    command_frame_id: base_link
+    use_sim_time: true

@@ -1,0 +1,51 @@
+# One constant surface coefficient per selected dataset; unchanged across position/speed/time.
+# Reloaded at simulation start/Play. null entries use the explicitly reported default.
+# Tire direction/load response remains in tires.yaml; this scalar multiplies all four tires equally.
+selected_dataset: 0821
+reference_coefficient: 0.5231599
+default_coefficient: 0.5231599
+datasets:
+  '0521':
+    coefficient: null
+    status: uncalibrated
+  0814:
+    coefficient: null
+    status: uncalibrated
+  0821:
+    coefficient: 0.5377581441296462
+    status: fitted_effective_weak_evidence
+    training_seconds: 27.1
+    independent_time_blocks: 3
+    note: Constant within dataset; effective response estimate, not a directly measured
+      surface coefficient.
+  0821-1:
+    coefficient: 0.5271083135225749
+    status: fitted_effective_response
+    training_seconds: 366.3
+    independent_time_blocks: 22
+    note: Constant within dataset; effective response estimate, not a directly measured
+      surface coefficient.
+  0822:
+    coefficient: null
+    status: uncalibrated
+  ifac:
+    coefficient: 0.5638502041405536
+    status: fitted_effective_response
+    training_seconds: 110.92
+    independent_time_blocks: 8
+    note: Constant within dataset; effective response estimate, not a directly measured
+      surface coefficient.
+  ifac1:
+    coefficient: 0.6340999651851742
+    status: fitted_effective_response
+    training_seconds: 372.18
+    independent_time_blocks: 26
+    note: Constant within dataset; effective response estimate, not a directly measured
+      surface coefficient.
+  ifac2:
+    coefficient: 0.43553870690921614
+    status: fitted_effective_response
+    training_seconds: 51.36
+    independent_time_blocks: 11
+    note: Constant within dataset; effective response estimate, not a directly measured
+      surface coefficient.

@@ -1,0 +1,20 @@
+{
+  "applied_at": "2026-11-18T17:02:51.076553+00:00",
+  "config_sha256": {
+    "surface_friction.yaml": "38b14e39e14cb75f2765c5cbfd4ea026560a88857ac8bedc340df026bc61b5da",
+    "runtime.yaml": "1af556a3ba8624c5ae6521d01d2b00a57c08ffd1f556b2e5506b52e5321af6df",
+    "steering.yaml": "ef583a5a8b3bfe9204f5a3ae2a0759a437916810c51861ef9d0a8cf973eb0bc4",
+    "tf.yaml": "160b4a5127ed17d036f3e8161ca2053a65ed8d3778e5492ab6da831760ff675c",
+    "vesc_sim.yaml": "34921235aad28fb455fad54bcbec6e6662f49743496c25d3960b579e72cf89c2",
+    "lidar.yaml": "df2339e8f143a0161a993337182bb869d8cbaaf713546e7caa8421970fc43b5e",
+    "tires.yaml": "820d7c6331f924975cda8319af5d08eb4c4bf07a2baaad715ae723fc6cda6e95",
+    "imu.yaml": "016ed3a638a91540d8ae6bd94fbd7adc1ec6562260a3c80ff181b7fad1b3908f"
+  },
+  "candidate": "/home/shin/Desktop/multipath/damvi_vesc_sim/calibration/dynamic_20261119/frozen_dataset_candidate.json",
+  "retained_vesc_current_max_a": 62,
+  "retained_erpm_gain": 1538,
+  "physics_hz": 200,
+  "unit_tests_passed": 181,
+  "surface_reload_check": "pass",
+  "tire_material_restore_check": "pass"
+}

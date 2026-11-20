@@ -1,0 +1,8 @@
+# Visual review camera; this is not a vehicle sensor or controller input.
+horizontal_distance_m: 2.0
+height_above_ground_m: 1.5
+# 135 degrees from the rear points to the front-right quarter, exposing steering.
+rear_side_angle_deg: 135.0
+look_at_height_above_chassis_m: 0.03
+focal_length_mm: 40.0
+resolution: [1280, 720]

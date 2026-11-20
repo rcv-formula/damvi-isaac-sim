@@ -1,0 +1,49 @@
+enabled: true
+input_topic: /cmd_vel
+input_field: angular.z
+input_semantics: steering_angle_rad; not yaw_rate_rad_s
+model: monotone_pchip
+input_limit_rad: 0.673076923076923
+center_angle_limit_rad: 0.301
+actuator_time_constant_s: 0.07
+actuator_rate_limit_rad_s: 3.2
+identified_command_to_imu_lag_s: 0.07
+lag_applied_as_extra_delay: false
+calibration_wheelbase_m: 0.26
+simulation_wheelbase_m: 0.25
+simulation_front_track_m: 0.2
+geometry_policy: Preserve existing USD dimensions; angle mapping is calibrated using
+  the real INI wheelbase.
+joint_stiffness: 10.0
+joint_damping: 0.1
+joint_max_torque_nm: 1.0
+calibration:
+  method: Observed driver servo clipping, robust affine interior in IMU kinematic
+    equivalent angle
+  command_proxy: /drive.drive.steering_angle, only when actual servo agrees with 0.5+0.52*command
+  speed_max_mps: 2.5
+  speed_min_mps: 0.6
+  longitudinal_accel_max_mps2: 0.5
+  lateral_accel_max_mps2: 1.5
+  pf_speed_agreement_relative: 0.2
+  pf_speed_agreement_absolute_mps: 0.2
+  source_ini: /home/shin/Desktop/raceline/Raceline-Optimization/params/f110_rgb.ini
+  selected_seconds: 54.68
+  blocked_holdout_rmse_deg: 1.3029380592596282
+  report: ../calibration/steering_review/report.json
+  validation_protocol: 'Nested temporal cross-validation: 20 s outer blocks, 5 folds,
+    0.5 s embargo'
+  leave_recording_out_rmse_deg: 2.1201702223685395
+  servo_command_gain_observed: 0.52
+  servo_command_offset_observed: 0.5
+  servo_normalized_min: 0.15
+  servo_normalized_max: 0.85
+  mechanical_wheel_angle_measured: false
+  mapping_status: Provisional equivalent angle; linkage curvature inside saturation
+    is not identified
+input_knots_rad:
+- -0.673076923076923
+- 0.673076923076923
+wheel_angle_knots_rad:
+- -0.2675343220254177
+- 0.29579720195644776

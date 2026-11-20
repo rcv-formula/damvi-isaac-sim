@@ -1,0 +1,40 @@
+[
+  {
+    "mcap": "/home/shin/Desktop/red-damvi dataset/0821/test_2_0.mcap",
+    "topics": {
+      "/drive": {
+        "count": 4259,
+        "min": 0.40800318121910095,
+        "max": 2.7827436923980713,
+        "median_rate_hz": 100.01666777768514,
+        "positive": 4259,
+        "negative": 0
+      },
+      "/commands/motor/speed": {
+        "count": 4172,
+        "min": 1632.2820069760085,
+        "max": 11132.811380429268,
+        "median_rate_hz": 100.00108001166413,
+        "positive": 4172,
+        "negative": 0
+      },
+      "/odom_wheel": {
+        "count": 2086,
+        "min": 0.4940091299248255,
+        "max": 2.6936076015129253,
+        "median_rate_hz": 49.992428646681454,
+        "positive": 2086,
+        "negative": 0
+      },
+      "/sensors/core": {
+        "count": 2081,
+        "min": 2036.0,
+        "max": 10777.0,
+        "median_rate_hz": 50.00658336670022,
+        "positive": 2081,
+        "negative": 0
+      }
+    },
+    "recorded_command_gain_median": 4000.66
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "broadphase": "GPU",
+    "threads": 8,
+    "physx_dispatcher": false,
+    "wall_s": 4.019917755002098,
+    "sim_s": 1.2000000569969416,
+    "realtime_factor": 0.2985135841408067,
+    "steps": 1200,
+    "error": null
+  },
+  {
+    "broadphase": "MBP",
+    "threads": 0,
+    "physx_dispatcher": false,
+    "wall_s": 4.0145482959997025,
+    "sim_s": 1.4500000688713044,
+    "realtime_factor": 0.3611863557143296,
+    "steps": 1450,
+    "error": null
+  },
+  {
+    "broadphase": "SAP",
+    "threads": 0,
+    "physx_dispatcher": false,
+    "wall_s": 4.0327168320000055,
+    "sim_s": 1.4500000688713044,
+    "realtime_factor": 0.35955910848126277,
+    "steps": 1450,
+    "error": null
+  },
+  {
+    "broadphase": "MBP",
+    "threads": 0,
+    "physx_dispatcher": true,
+    "wall_s": 4.006504953998956,
+    "sim_s": 1.4000000664964318,
+    "realtime_factor": 0.34943175724744074,
+    "steps": 1400,
+    "error": null
+  }
+]

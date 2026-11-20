@@ -1,0 +1,11 @@
+{
+  "samples": 2001,
+  "max_target_angle_error_rad": 2.220446049250313e-16,
+  "target_at_saturated_ends_rad": [
+    -0.2675343220254177,
+    0.29579720195644776
+  ],
+  "all_finite": true,
+  "all_monotone": true,
+  "passed": true
+}

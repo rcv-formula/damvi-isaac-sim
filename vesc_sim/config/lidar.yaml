@@ -1,0 +1,27 @@
+# Hokuyo UST-10LX (the requested "UST-LX10"), read again on every Play.
+# Official: https://www.hokuyo-aut.jp/search/single.php?serial=167
+enabled: true
+model: Hokuyo UST-10LX
+# Live GUI comparison: 1087 identical rays, zero range difference; about 2.2x
+# faster queries using integer hit IDs and bulk vector conversion.
+# Falls back to physx only if the newer API is unavailable at reload.
+backend: physics_core
+topic: /scan
+frame_id: laser
+# Extrinsics and /tf_static publication are centrally owned by config/tf.yaml.
+scan_rate_hz: 40.0
+angle_min_deg: -135.0
+angle_max_deg: 135.0
+angle_increment_deg: 0.25
+# Rotation covers 360 degrees per 25ms. 1081 samples cover the visible 270deg;
+# time_increment = 25ms / 1440, NOT 25ms / 1080.
+rotation_degrees_per_scan: 360.0
+range_min_m: 0.06  # Manufacturer minimum; recorded driver advertises 0.02m.
+range_max_m: 30.0  # Recorded /scan and manufacturer's maximum detection range.
+# 30m is not a guaranteed range: white target guaranteed 10m; dark 10% target 4m.
+# Geometry-only backend has no material/reflectivity-dependent detection model.
+guaranteed_white_target_range_m: 10.0
+guaranteed_dark_target_range_m: 4.0
+ignore_vehicle_colliders: true
+both_sides: true
+qos_depth: 5

@@ -1,0 +1,146 @@
+{
+  "model": "monotone_pchip",
+  "command_to_imu_lag_s": 0.07,
+  "selected_seconds": 54.68,
+  "selected_samples": 2734,
+  "knot_input_rad": [
+    -0.872664626,
+    -0.7,
+    -0.5,
+    -0.3,
+    -0.15,
+    0.0,
+    0.15,
+    0.3,
+    0.5,
+    0.7,
+    0.872664626
+  ],
+  "knot_angle_rad": [
+    -0.29337219156131905,
+    -0.27444366772904283,
+    -0.20016383497892143,
+    -0.10289889545801192,
+    -0.05143783152402412,
+    0.015943727836979282,
+    0.08024684320915942,
+    0.1371640347536835,
+    0.2118117286083408,
+    0.2753588782309379,
+    0.275358878364293
+  ],
+  "knot_block_bootstrap_95pct_rad": [
+    [
+      -0.300999999999989,
+      -0.27913078553333026,
+      -0.21826607780221763,
+      -0.1116159711051405,
+      -0.058894937480258994,
+      0.012049646930962157,
+      0.07688253810364713,
+      0.1321272170785229,
+      0.2005167789471795,
+      0.25177960557631046,
+      0.25177960567776125
+    ],
+    [
+      -0.28899338132447683,
+      -0.26554181222018625,
+      -0.1922984115660639,
+      -0.09794051527990544,
+      -0.042066235050928505,
+      0.021496538190472383,
+      0.08435079946610564,
+      0.1419983765830891,
+      0.22097936820994915,
+      0.2881484069306119,
+      0.3009997286861903
+    ]
+  ],
+  "block_size_s": 2.0,
+  "bootstrap_samples": 100,
+  "linear_baseline_holdout_rmse_deg": 1.4954397294044417,
+  "nonlinear_holdout_rmse_deg": 1.496805149204338,
+  "regularization_candidates": [
+    {
+      "penalty": 0.0,
+      "holdout_rmse_deg": 1.4815036846391605
+    },
+    {
+      "penalty": 1e-05,
+      "holdout_rmse_deg": 1.4818921460976342
+    },
+    {
+      "penalty": 3e-05,
+      "holdout_rmse_deg": 1.4827675724660927
+    },
+    {
+      "penalty": 0.0001,
+      "holdout_rmse_deg": 1.4863707167983329
+    },
+    {
+      "penalty": 0.0003,
+      "holdout_rmse_deg": 1.496805149204338
+    },
+    {
+      "penalty": 0.001,
+      "holdout_rmse_deg": 1.5274611087998125
+    },
+    {
+      "penalty": 0.003,
+      "holdout_rmse_deg": 1.5362403046127602
+    },
+    {
+      "penalty": 0.01,
+      "holdout_rmse_deg": 1.575003127677146
+    },
+    {
+      "penalty": 0.03,
+      "holdout_rmse_deg": 1.6388221924019688
+    }
+  ],
+  "chosen_penalty": 0.0003,
+  "overall_rmse_deg": 1.2663476026466853,
+  "per_bag": [
+    {
+      "bag": "0821-1_test_3_0",
+      "selected_seconds": 42.74,
+      "samples": 2137,
+      "rmse_deg": 0.9009872427903473,
+      "leave_one_bag_out_rmse_deg": 2.1415480224414
+    },
+    {
+      "bag": "0821_test_2_0",
+      "selected_seconds": 0.36,
+      "samples": 18,
+      "rmse_deg": 0.9921930832799978,
+      "leave_one_bag_out_rmse_deg": 0.995532632303172
+    },
+    {
+      "bag": "last_14_last_14_0",
+      "selected_seconds": 0.0,
+      "samples": 0
+    },
+    {
+      "bag": "last_7_last_7_0",
+      "selected_seconds": 1.9000000000000001,
+      "samples": 95,
+      "rmse_deg": 1.4184040652963361,
+      "leave_one_bag_out_rmse_deg": 1.463879080127681
+    },
+    {
+      "bag": "test_38_test_38_0",
+      "selected_seconds": 9.68,
+      "samples": 484,
+      "rmse_deg": 2.2456220915171876,
+      "leave_one_bag_out_rmse_deg": 2.5179686252427507
+    }
+  ],
+  "limitations": [
+    "This is a kinematic equivalent angle inferred from IMU yaw and wheel speed, not a direct mechanical wheel-angle measurement.",
+    "No cmd_vel is recorded; /drive steering_angle is the proxy, matched to executed servo commands.",
+    "Data are sparse near the input limits. The curve clamps there and the endpoint uncertainty is reported.",
+    "Record-to-record slip/trim variations remain. A wheel-angle sensor or static servo sweep is needed to isolate linkage geometry.",
+    "The selected nonlinear form is compared against the earlier affine map using the same time-block holdout."
+  ]
+}

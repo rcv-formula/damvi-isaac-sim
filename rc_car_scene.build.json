@@ -1,0 +1,738 @@
+{
+  "source_obj": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/source/rc_car_fusion.obj",
+  "output_usd": "/home/shin/Desktop/RC_Car_Isaac/rc_car_scene.usd",
+  "visual_transform": {
+    "scale": 0.001,
+    "axes": [
+      "-x",
+      "z",
+      "y"
+    ],
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "translation": [
+      0.025,
+      0,
+      -0.058
+    ]
+  },
+  "visual_bounds_vehicle_m": [
+    [
+      -0.24400000000000002,
+      -0.134704519,
+      -0.058
+    ],
+    [
+      0.28951213200000003,
+      0.135295481,
+      0.226121468
+    ]
+  ],
+  "visual_dimensions_m": [
+    0.533512132,
+    0.27,
+    0.284121468
+  ],
+  "visual_meshes": 105,
+  "visual_faces": 191712,
+  "mass_total_kg": 3.5,
+  "measured_initial_mass_kg": 3.4999999180436134,
+  "measured_initial_com_world_m": [
+    2.2759464043191293e-10,
+    0.0,
+    0.06999999986472547
+  ],
+  "measured_initial_yaw_inertia_kg_m2": 0.04711999931556114,
+  "measured_rigid_body_count": 9,
+  "nominal_loaded_com_world_m": [
+    0,
+    0,
+    0.07
+  ],
+  "initial_spawn_lift_m": 0,
+  "aggregate_yaw_inertia_kg_m2": 0.04712,
+  "chassis_mass_kg": 3.1,
+  "chassis_com_local_m": [
+    -0.003225806451612903,
+    0,
+    0.005427096774193549
+  ],
+  "chassis_diagonal_inertia_kg_m2": [
+    0.01539898660727597,
+    0.036622792953185414,
+    0.03583843366548387
+  ],
+  "wheel_diagonal_inertia_kg_m2": [
+    2.46370675e-05,
+    2.9274135e-05,
+    2.46370675e-05
+  ],
+  "carrier_diagonal_inertia_kg_m2": [
+    1.4400000000000004e-06,
+    1.4400000000000004e-06,
+    1.4400000000000004e-06
+  ],
+  "wheel_diameter_m": 0.05588,
+  "wheel_width_m": 0.04,
+  "tire_visual_radial_segments": 256,
+  "tire_visual_vertices_per_wheel": 514,
+  "tire_visual_triangles_per_wheel": 1024,
+  "tire_visual_normals": "smooth radial sidewall normals; flat cap normals",
+  "tire_collision_type": "analytic cylinder",
+  "physics_collision_approximate_cylinders": false,
+  "physics_gpu_dynamics": false,
+  "ground_collision_type": "native plane at Z=0",
+  "ground_visual_dimensions_m": [
+    20,
+    20
+  ],
+  "front_rear_outside_width_m": [
+    0.24,
+    0.27
+  ],
+  "ini_planner_width_m": 0.22,
+  "physics_hz": 480,
+  "spring_N_per_m": 20000,
+  "damper_N_s_per_m": 200,
+  "suspension_limits_m": [
+    -0.0015,
+    0.0015
+  ],
+  "collision_proxies": [
+    {
+      "source_name": "\uba54\uc26c \ubcf8\uccb41",
+      "center": [
+        0.145878779,
+        0.0001799999999999996,
+        0.012387271499999998
+      ],
+      "size": [
+        0.036576,
+        0.036195,
+        0.010159999000000003
+      ],
+      "raw_bounds": [
+        [
+          0.127590779,
+          -0.0179175,
+          0.007307271999999997
+        ],
+        [
+          0.16416677899999998,
+          0.0182775,
+          0.017467271
+        ]
+      ],
+      "raw_size": [
+        0.036576,
+        0.036195,
+        0.010159999000000003
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 5870,
+      "source_face_count": 11768,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "\ubcf8\uccb41",
+      "center": [
+        0.12833041,
+        2.3609000000000824e-05,
+        0.056500499999999995
+      ],
+      "size": [
+        0.08529999999999999,
+        0.05,
+        0.07000100000000001
+      ],
+      "raw_bounds": [
+        [
+          0.08568041000000001,
+          -0.024976391,
+          0.0215
+        ],
+        [
+          0.17098041,
+          0.025023609000000002,
+          0.091501
+        ]
+      ],
+      "raw_size": [
+        0.08529999999999999,
+        0.05,
+        0.07000100000000001
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "Opaque(0,0,128)",
+        "Opaque(0,0,192)",
+        "Opaque(128,128,128)",
+        "Opaque(202,209,238)",
+        "Opaque(63,63,63)",
+        "Opaque(64,64,64)"
+      ],
+      "source_vertex_count": 31296,
+      "source_face_count": 62406,
+      "source_material_chunk_count": 85
+    },
+    {
+      "source_name": "servo mount",
+      "center": [
+        0.08099913,
+        -0.03224913,
+        -0.043945502000000004
+      ],
+      "size": [
+        0.02499999999999998,
+        0.057,
+        0.023599999999999996
+      ],
+      "raw_bounds": [
+        [
+          0.06849913,
+          -0.060749130000000005,
+          -0.055745502
+        ],
+        [
+          0.09349912999999999,
+          -0.0037491300000000003,
+          -0.032145502000000006
+        ]
+      ],
+      "raw_size": [
+        0.02499999999999998,
+        0.057,
+        0.023599999999999996
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "ABS(\ud770\uc0c9)"
+      ],
+      "source_vertex_count": 1333,
+      "source_face_count": 2678,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "\ubcf8\uccb41:1",
+      "center": [
+        -0.017707193000000003,
+        5.067000000004429e-06,
+        0.009999999999999995
+      ],
+      "size": [
+        0.112,
+        0.1437,
+        0.041999999999999996
+      ],
+      "raw_bounds": [
+        [
+          -0.073707193,
+          -0.071844933,
+          -0.011000000000000003
+        ],
+        [
+          0.038292807,
+          0.07185506700000001,
+          0.030999999999999993
+        ]
+      ],
+      "raw_size": [
+        0.112,
+        0.1437,
+        0.041999999999999996
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 37291,
+      "source_face_count": 74630,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "\ubcf8\uccb41:2",
+      "center": [
+        0.07075000000000001,
+        0.005499999999999998,
+        0.005749999999999998
+      ],
+      "size": [
+        0.058,
+        0.14300000000000002,
+        0.027499999999999997
+      ],
+      "raw_bounds": [
+        [
+          0.04175,
+          -0.066,
+          -0.008
+        ],
+        [
+          0.09975,
+          0.077,
+          0.019499999999999997
+        ]
+      ],
+      "raw_size": [
+        0.058,
+        0.14300000000000002,
+        0.027499999999999997
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 1665,
+      "source_face_count": 3326,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "sensor_plate",
+      "center": [
+        0.146030782,
+        0.010975517999999997,
+        0.031999999999999994
+      ],
+      "size": [
+        0.065,
+        0.107,
+        0.028999999999999998
+      ],
+      "raw_bounds": [
+        [
+          0.113530782,
+          -0.042524482,
+          0.017499999999999995
+        ],
+        [
+          0.178530782,
+          0.064475518,
+          0.04649999999999999
+        ]
+      ],
+      "raw_size": [
+        0.065,
+        0.107,
+        0.028999999999999998
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 2345,
+      "source_face_count": 4754,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "addon_platform",
+      "center": [
+        -0.17400000000000002,
+        0.0,
+        0.0024999999999999988
+      ],
+      "size": [
+        0.14,
+        0.13,
+        0.006999999999999999
+      ],
+      "raw_bounds": [
+        [
+          -0.24400000000000002,
+          -0.065,
+          -0.0010000000000000009
+        ],
+        [
+          -0.10400000000000001,
+          0.065,
+          0.005999999999999998
+        ]
+      ],
+      "raw_size": [
+        0.14,
+        0.13,
+        0.006999999999999999
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 1016,
+      "source_face_count": 2096,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "addon_side",
+      "center": [
+        -0.173946435,
+        0.06,
+        0.11452146800000003
+      ],
+      "size": [
+        0.12600000000000003,
+        0.0029999999999999957,
+        0.22300000000000006
+      ],
+      "raw_bounds": [
+        [
+          -0.23694643500000004,
+          0.0585,
+          0.0030214679999999994
+        ],
+        [
+          -0.11094643500000001,
+          0.0615,
+          0.22602146800000006
+        ]
+      ],
+      "raw_size": [
+        0.12600000000000003,
+        0.0029999999999999957,
+        0.22300000000000006
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 296,
+      "source_face_count": 616,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "addon_side (1)",
+      "center": [
+        -0.173946435,
+        -0.06,
+        0.11462146799999999
+      ],
+      "size": [
+        0.12600000000000003,
+        0.0029999999999999957,
+        0.223
+      ],
+      "raw_bounds": [
+        [
+          -0.23694643500000004,
+          -0.0615,
+          0.0031214679999999953
+        ],
+        [
+          -0.11094643500000001,
+          -0.0585,
+          0.226121468
+        ]
+      ],
+      "raw_size": [
+        0.12600000000000003,
+        0.0029999999999999957,
+        0.223
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 296,
+      "source_face_count": 616,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "addon_rear",
+      "center": [
+        -0.2325,
+        3.487899999999808e-05,
+        0.114504861
+      ],
+      "size": [
+        0.0030000000000000027,
+        0.123,
+        0.223
+      ],
+      "raw_bounds": [
+        [
+          -0.234,
+          -0.061465121000000005,
+          0.0030048609999999976
+        ],
+        [
+          -0.231,
+          0.061534879,
+          0.226004861
+        ]
+      ],
+      "raw_size": [
+        0.0030000000000000027,
+        0.123,
+        0.223
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 256,
+      "source_face_count": 508,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "deck-nuc-one",
+      "center": [
+        0.010112882500000003,
+        -1.6059999999942787e-06,
+        -0.0067500000000000025
+      ],
+      "size": [
+        0.253774235,
+        0.147403212,
+        0.017499999999999995
+      ],
+      "raw_bounds": [
+        [
+          -0.116774235,
+          -0.07370321199999999,
+          -0.0155
+        ],
+        [
+          0.137,
+          0.0737,
+          0.001999999999999995
+        ]
+      ],
+      "raw_size": [
+        0.253774235,
+        0.147403212,
+        0.017499999999999995
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 5312,
+      "source_face_count": 10788,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "bumper",
+      "center": [
+        0.24701213200000002,
+        0.0002954810000000002,
+        -0.0455
+      ],
+      "size": [
+        0.08500000000000002,
+        0.27,
+        0.025
+      ],
+      "raw_bounds": [
+        [
+          0.204512132,
+          -0.134704519,
+          -0.058
+        ],
+        [
+          0.28951213200000003,
+          0.135295481,
+          -0.033
+        ]
+      ],
+      "raw_size": [
+        0.08500000000000002,
+        0.27,
+        0.025
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "\uac15\ucca0_-_\uc0c8\ud2f4"
+      ],
+      "source_vertex_count": 4337,
+      "source_face_count": 8678,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "\ubcf8\uccb41:3",
+      "center": [
+        0.032295306999999995,
+        -0.0002500000000000002,
+        -0.024
+      ],
+      "size": [
+        0.3275,
+        0.125,
+        0.068
+      ],
+      "raw_bounds": [
+        [
+          -0.131454693,
+          -0.06275,
+          -0.058
+        ],
+        [
+          0.196045307,
+          0.06225,
+          0.010000000000000002
+        ]
+      ],
+      "raw_size": [
+        0.3275,
+        0.125,
+        0.068
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "ABS(\ud770\uc0c9)_1",
+        "ABS(\ud770\uc0c9)_2"
+      ],
+      "source_vertex_count": 2520,
+      "source_face_count": 5080,
+      "source_material_chunk_count": 7
+    },
+    {
+      "source_name": "battery",
+      "center": [
+        0.027500000000000007,
+        0.036000000000000004,
+        -0.045
+      ],
+      "size": [
+        0.155,
+        0.045000000000000005,
+        0.026000000000000002
+      ],
+      "raw_bounds": [
+        [
+          -0.049999999999999996,
+          0.0135,
+          -0.058
+        ],
+        [
+          0.10500000000000001,
+          0.0585,
+          -0.032
+        ]
+      ],
+      "raw_size": [
+        0.155,
+        0.045000000000000005,
+        0.026000000000000002
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "ABS(\ud770\uc0c9)_3"
+      ],
+      "source_vertex_count": 1880,
+      "source_face_count": 3756,
+      "source_material_chunk_count": 1
+    },
+    {
+      "source_name": "servo",
+      "center": [
+        0.083744855,
+        -0.032278706000000004,
+        -0.045
+      ],
+      "size": [
+        0.03699999999999999,
+        0.04,
+        0.019999999999999997
+      ],
+      "raw_bounds": [
+        [
+          0.065244855,
+          -0.052278706,
+          -0.055
+        ],
+        [
+          0.102244855,
+          -0.012278706,
+          -0.035
+        ]
+      ],
+      "raw_size": [
+        0.03699999999999999,
+        0.04,
+        0.019999999999999997
+      ],
+      "thickened_axes": [],
+      "source_materials": [
+        "ABS(\ud770\uc0c9)_2"
+      ],
+      "source_vertex_count": 8,
+      "source_face_count": 12,
+      "source_material_chunk_count": 1
+    }
+  ],
+  "wheels": [
+    {
+      "name": "FL",
+      "center_vehicle_m": [
+        0.15,
+        0.1,
+        -0.04206000000000001
+      ],
+      "spring_target_m": -0.0002943,
+      "carrier_mass_kg": 0.025,
+      "tire_mass_kg": 0.075
+    },
+    {
+      "name": "FR",
+      "center_vehicle_m": [
+        0.15,
+        -0.1,
+        -0.04206000000000001
+      ],
+      "spring_target_m": -0.0002943,
+      "carrier_mass_kg": 0.025,
+      "tire_mass_kg": 0.075
+    },
+    {
+      "name": "RL",
+      "center_vehicle_m": [
+        -0.1,
+        0.115,
+        -0.04206000000000001
+      ],
+      "spring_target_m": -0.000465975,
+      "carrier_mass_kg": 0.025,
+      "tire_mass_kg": 0.075
+    },
+    {
+      "name": "RR",
+      "center_vehicle_m": [
+        -0.1,
+        -0.115,
+        -0.04206000000000001
+      ],
+      "spring_target_m": -0.000465975,
+      "carrier_mass_kg": 0.025,
+      "tire_mass_kg": 0.075
+    }
+  ],
+  "assumptions": [
+    "Wheel/carrier mass split is estimated; total mass/COM/yaw follow INI.",
+    "Roll/pitch inertia uses CAD bounding-box aspect ratio unless overridden.",
+    "CAD visuals are rigidly grouped; collision uses specified box proxies.",
+    "Tire friction is constant .9; INI Magic Formula/drag are not implemented.",
+    "No ROS, active sensors, steering actuator, or wheel propulsion configured."
+  ],
+  "actual_fusion_mesh_imported": true,
+  "alignment_notes": [
+    "Fusion source Y is up; source negative X is the front bumper and positive X is the rear tower.",
+    "CAD millimeter scale is preserved, without fitting the model to the INI planning envelope.",
+    "Vehicle +X forward, +Y left, +Z up. Axle midpoint maps to source X=0.",
+    "Visual lowest point is 12 mm above the ground at nominal loaded pose.",
+    "Compound chassis collision uses one box per CAD group, including the upper frame and equipment."
+  ],
+  "camera_eye_world_m": [
+    1.02,
+    -1.15,
+    0.7625
+  ],
+  "camera_target_world_m": [
+    0.025,
+    0,
+    0.15
+  ]
+}

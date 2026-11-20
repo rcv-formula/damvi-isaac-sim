@@ -1,0 +1,42 @@
+[
+  {
+    "file": "0521.usdc",
+    "bytes": 18875,
+    "reference_composes": true
+  },
+  {
+    "file": "0814.usdc",
+    "bytes": 20177,
+    "reference_composes": true
+  },
+  {
+    "file": "0821-1.usdc",
+    "bytes": 24193,
+    "reference_composes": true
+  },
+  {
+    "file": "0821.usdc",
+    "bytes": 24193,
+    "reference_composes": true
+  },
+  {
+    "file": "0822.usdc",
+    "bytes": 25410,
+    "reference_composes": true
+  },
+  {
+    "file": "ifac.usdc",
+    "bytes": 22205,
+    "reference_composes": true
+  },
+  {
+    "file": "ifac1.usdc",
+    "bytes": 22205,
+    "reference_composes": true
+  },
+  {
+    "file": "ifac2.usdc",
+    "bytes": 22205,
+    "reference_composes": true
+  }
+]

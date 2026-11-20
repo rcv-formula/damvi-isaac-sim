@@ -1,0 +1,145 @@
+pure_pursuit:
+  ros__parameters:
+    odom_topic: "/odom"
+    path_topic: "/Path"
+    car_refFrame: "base_link"
+    global_refFrame: "map"
+    drive_topic: "/drive_main"
+    test_mode: False
+    drive_test_topic: "/drive_test"
+    rviz_current_waypoint_topic: "/current_waypoint"
+    rviz_lookahead_waypoint_topic: "/lookahead_waypoint"
+    rviz_speed_offset_waypoint_topic: "/speed_offset_waypoint"
+    rviz_runtime_params_topic: "/pp_runtime_params"
+    rviz_runtime_params_x: 0.0
+    rviz_runtime_params_y: 0.0
+    rviz_runtime_params_z: 1.2
+
+    # /rf(std_msgs/UInt16MultiArray) 기반 실시간 속도 파라미터 조절
+    # channel 값은 /rf.data[]의 0-based index입니다. 예: CH7 -> 6, CH8 -> 7
+    rf_topic: "/rf"
+    rf_speed_scale_channel: 6
+    rf_max_limit_channel: 7
+    # 최대속 제한 채널(7) 바로 다음 채널이 enable 스위치입니다.
+    rf_enable_channel: 8
+    # enable 채널 raw 값이 이 값 "미만"일 때만 위 두 채널 값을 반영합니다(반전 로직).
+    # 스위치 raw는 rf_value_min(1000) ~ rf_value_max(2000)이므로 중간값 1500 기준.
+    # 이 값이 1000 이하면 어떤 위치에서도 반영되지 않으니 주의.
+    rf_enable_threshold: 1500
+    rf_value_min: 1000
+    rf_value_max: 2000
+
+    # VESC sensors/core 기반 실제 휠 속도
+    # speed(m/s) = (state.speed[erpm] - speed_to_erpm_offset) / speed_to_erpm_gain
+    vesc_state_topic: "sensors/core"
+    speed_to_erpm_gain: 3172.47
+    speed_to_erpm_offset: 0.0
+    wheel_speed_deadband: 0.05  # 이하이면 0으로 간주 (vesc_to_odom과 동일)
+    # 측정 휠 속도를 명령 속도(path speed) 도메인으로 맞추는 배율.
+    # 실측이 약 2.6배 느리게 나와서 곱해줍니다. 아래 diff 값들은 모두
+    # 이 변환 후의 명령 속도 기준입니다 (실제 속도로는 1/2.6 수준).
+    wheel_speed_scale: 2.6
+    wheel_speed_timeout: 0.5  # 이보다 오래된 값이면 런치 스타트를 걸지 않음
+
+    # 런치 스타트: 트리거가 오면 목표 속도까지 설정 가속도로만 올라가는 래치
+    launch_start_enabled: True
+    # /rf.data[] 인덱스 (앞에서 6번째 채널 = 0-based 5)
+    launch_start_channel: 5
+    launch_start_channel_threshold: 1800  # 이하 -> 초과로 올라갈 때만 발동
+    # 보조 트리거 채널: 앞에서 5번째(0-based 4)가 2000이 되면 같은 래치/램프업 발동.
+    # 음수로 두면 보조 트리거를 쓰지 않습니다.
+    launch_start_channel_2: 4
+    launch_start_channel_2_threshold: 1900
+    # 아래 두 기준에는 RF 속도 게인(velocity_percentage)이 곱해집니다.
+    # 목표 속도 자체가 게인만큼 줄어들기 때문에, 기준도 같이 줄여야
+    # 게인이 낮을 때 램프가 곧바로 풀리지 않습니다.
+    launch_start_engage_diff: 1.0   # 목표와 휠 속도 차이가 이 이상일 때만 래치
+    launch_start_release_diff: 0.5  # 목표와 차이가 이 이하가 되면 래치 해제
+    launch_start_accel: 3.0         # m/s^2, 래치 중 속도 변화율
+    launch_start_reset_topic: "/launch_start_reset"  # std_msgs/Bool
+    # 외부 요청 고정 속도 유지: [speed(m/s), duration(s)] 를 받아 즉시 그 속도로
+    # duration 동안 고정하고, 끝나면 그 속도에서 바로 램프업으로 넘어갑니다.
+    speed_hold_topic: "/launch_speed_hold"   # std_msgs/Float64MultiArray
+    speed_hold_default_duration: 1.0  # duration 을 생략했을 때 쓰는 값(s)
+    speed_hold_max_duration: 10.0     # 잘못된 요청으로 계속 붙잡히지 않도록 상한(s)
+                                      # 0으로 두면 speed hold 기능 자체가 꺼집니다
+    # 경로에서 유도되지 않은 속도라 path 상한이 안 걸릴 수 있어 절대 상한을 둡니다.
+    # 이 값을 넘는 요청은 잘리지 않고 거부됩니다.
+    speed_hold_max_speed: 8.0         # m/s (명령 속도 도메인)
+
+    path_is_circular: True
+    # path_is_circular를 false로 해야 로컬패스 가능
+    
+    # Pure Pursuit Parameters
+    # Lookahead is computed using the following: lookahead = min(max(min_lookahead, max_lookahead * curr_velocity / lookahead_ratio), max_lookahead);
+    # min_lookahead: 0.5 # for square track
+    min_lookahead: 1.0 # for larger track
+    max_lookahead: 4.5 # lookahead when the car is going around max velocity
+    lookahead_ratio: 6.5  # approximately the max velociy
+    
+    # 속도 프로파일을 읽는 waypoint의 거리 offset(m).
+    # 양수: 앞쪽 path speed(z)를 미리 읽음, 음수: 뒤쪽 speed(z)를 읽음, 0: 현재 closest 기준
+    speed_profile_distance_offset: 0.1
+
+    #보간된 drive command를 출력 hz
+    drive_output_rate_hz: 100.0
+    publish_drive_on_odom: True
+    visualization_rate_hz: 60.0
+
+    #steer잔떨림 제거 필터
+    steer_latest_blend: 0.15   #적은 스티어링 변화에서 1주기당 새로운 값 반영 비율, 높을수록 빠른 반영 낮을수록 잔떨림 적어짐
+    steer_large_change_blend: 0.55  #높은 스티어링 변화에서 1주기당 새로운 값 반영 비율, 높을수록 빠른 반영 낮을수록 잔떨림 적어짐
+    steer_blend_change_threshold_deg: 20.0  #낮은 스티어링/높은 스티어링 변화량 threash hold, 실제 반영은 이 값을 기준으로 부드럽게 blend비율을 반영함.
+    # 고속에서는 위 조향 필터 alpha를 최종값까지 서서히 올려 필터링을 줄임
+    steer_speed_filter_start_speed: 2.5  # m/s, 이 속도부터 고속 필터 완화 시작
+    steer_speed_filter_end_speed: 3.0  # m/s, 이 속도 이상에서는 아래 최종 blend 적용
+    steer_speed_filter_final_blend: 0.80  # 고속 최종 조향 blend, 높을수록 응답 빠름
+
+    #speed 잔떨림 제거 필더
+    speed_latest_blend: 0.40
+
+    
+    #K_p: 0.25 # for square track
+    #K_p: 0.15 # for big track
+    
+    #PID, Heding error계수
+    min_searching_idx_offset: 10
+    max_searching_idx_offset: 40
+    K_p: 0.46
+    K_d: 0.045
+    K_i: 0.000
+
+    heading_error_gain: 0.75
+    steering_limit: 50.0
+
+    # 서보-링크 비선형 보정용 steering expo
+    # gain > 0: 극단부 조향을 더 밀어줌, gain < 0: 극단부 조향을 눌러줌
+    # curve가 클수록 중앙부 영향은 줄고 끝단부 영향이 커짐
+    steering_expo_gain: 1.00
+    steering_expo_curve: 1.9
+    
+    # 기본 속도 배수. 런타임에는 ros2 param set으로 즉시 변경 가능
+    velocity_percentage: 0.32
+    # 지금까지 수신한 path speed(z)의 최대값에 곱하는 최종 속도 제한 비율
+    max_speed_limit_percentage: 1.0
+
+    #장애물 관련 속도 감속 파라미터
+    slow_with_obs: False
+    obs_slow_th: 2.0 #(m)
+    obs_slow_percentage: 0.7 #(퍼센트)
+
+
+    #고속 안정성용 파라미터(인공홀 기준)
+    steer_reduction_speed_threshold: 5.5 # 조향감소 시작 속도m/s
+    steer_reduction_constant_coef: 0.90  #조향감소 상수계수(스케일)
+    steer_reduction_linear_coef: 0.07  #조향감소 선형계수(스케일)
+    steer_reduction_min_scale: 0.6  #조향감소 하한치(스케일)
+    speed_reduction_steer_angle_deg: 5.0  #속도 감소가 시작되는 감소량(deg)
+    max_allowed_steer_drop_deg: 8.0  #최대 조향 감소량(최소 보장되는 스티어링 앵글(deg))
+    speed_reduction_adjust: 0.3  #속도 제한 시 추가로 감속할 양(+이면 더 감속, -이면 완화)
+    speed_reduction_prev_scale: 0.2  #이전 감속량 기반 추가 스케일 계수
+
+waypoint_visualizer_node:
+  ros__parameters:
+    path_topic: "/Path"
+    rviz_waypoints_topic: "/waypoints"

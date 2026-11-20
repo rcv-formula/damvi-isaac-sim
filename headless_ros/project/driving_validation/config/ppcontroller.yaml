@@ -1,0 +1,83 @@
+# Baseline PP behavior at upstream 22ce00b3619519cc491b739d61721cbf1b4ce59d.
+# Optional path-tracking corrections are supplied by pp_tracking_tuned.yaml.
+# Output steering is a physical equivalent front-wheel angle in radians.
+# The simulator input conversion is performed once by the final drive bridge.
+pure_pursuit:
+  ros__parameters:
+    use_sim_time: true
+    odom_topic: /odom
+    path_topic: /selected_path
+    car_refFrame: base_link
+    global_refFrame: map
+    drive_topic: /drive_main
+    test_mode: false
+
+    # PP does not select autonomous/manual/gap mode. Keep CH9 >= 1500 in
+    # the shared RF publisher so RF cannot overwrite these speed parameters.
+    rf_topic: /rf
+    rf_speed_scale_channel: 6
+    rf_max_limit_channel: 7
+    rf_enable_channel: 8
+    rf_enable_threshold: 1500
+    rf_value_min: 1000
+    rf_value_max: 2000
+    launch_start_enabled: false
+
+    vesc_state_topic: /sensors/core
+    speed_to_erpm_gain: 1538.0
+    speed_to_erpm_offset: 0.0
+    wheel_speed_scale: 1.0
+    wheel_speed_deadband: 0.05
+    wheel_speed_timeout: 0.5
+
+    # Both /selected_path branches currently carry full closed loops.
+    # Zero-length duplicate closing segments are handled by upstream.
+    path_is_circular: true
+    min_lookahead: 0.6
+    max_lookahead: 1.2
+    lookahead_ratio: 2.0
+    speed_profile_distance_offset: 0.0
+    min_searching_idx_offset: 10
+    max_searching_idx_offset: 40
+
+    # Upstream calculates delta=K_p*curvature, without atan or wheelbase.
+    # K_p=.25 therefore represents the .25 m wheelbase small-angle model.
+    K_p: 0.25
+    K_i: 0.0
+    K_d: 0.0
+    heading_error_gain: 0.0
+    # Symmetric physical limit .26 rad; the measured simulator limits are
+    # asymmetric, approximately [-.26754, +.2958] rad.
+    steering_limit: 14.896902673401405
+    steering_expo_gain: 0.0
+    steering_expo_curve: 2.0
+
+    # Keep original CSV speed profile. Its maximum is 8.2573994 m/s.
+    # This ratio limits PP output to 1.0 m/s once that path is received.
+    # The final command bridge independently applies an absolute speed cap.
+    velocity_percentage: 1.0
+    max_speed_limit_percentage: 0.12110350384650159
+    speed_hold_max_speed: 1.0
+    speed_hold_max_duration: 0.0
+    slow_with_obs: false
+
+    drive_output_rate_hz: 50.0
+    publish_drive_on_odom: false
+    visualization_rate_hz: 10.0
+    steer_latest_blend: 0.6
+    steer_large_change_blend: 0.8
+    steer_blend_change_threshold_deg: 10.0
+    steer_speed_filter_start_speed: 0.0
+    steer_speed_filter_end_speed: 0.0
+    steer_speed_filter_final_blend: 0.6
+    speed_latest_blend: 0.4
+
+    # Disable the real car's empirical high-speed steering compensation.
+    steer_reduction_speed_threshold: 5.0
+    steer_reduction_constant_coef: 1.0
+    steer_reduction_linear_coef: 0.0
+    steer_reduction_min_scale: 1.0
+    speed_reduction_steer_angle_deg: 12.0
+    max_allowed_steer_drop_deg: 5.0
+    speed_reduction_adjust: 0.0
+    speed_reduction_prev_scale: 0.0

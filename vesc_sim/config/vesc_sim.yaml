@@ -1,0 +1,74 @@
+provenance:
+  motor_xml: /media/shin/A0C8B261C8B2357E/Users/tlswo/Desktop/RCV-formula-motor-settings_default.xml
+  sha256: 15575c251373f54a14517e80443a7e9f62511a50a463667436279c1bfe6b5c2c
+  firmware_version: not encoded in XML; 6.05-compatible speed loop
+  calibration: PID/current/electrical from user-selected XML; drivetrain friction/compliance
+    uncalibrated
+speed_to_erpm_gain: 1538.0
+steering_config: steering.yaml
+lidar_config: lidar.yaml
+imu_config: imu.yaml
+tf_config: tf.yaml
+runtime_config: runtime.yaml
+tires_config: tires.yaml
+surface_friction_config: surface_friction.yaml
+speed_to_erpm_offset: 0.0
+erpm_sign: 1
+controller_hz: 5000
+physics_hz: 200
+controller:
+  kp: 0.009
+  ki: 0.0
+  kd: 1.5e-05
+  kd_filter: 0.0
+  min_erpm: 800.0
+  ramp_erpm_per_s: 50000.0
+  allow_braking: 1.0
+  current_max: 62.0
+  current_max_scale: 1.0
+  erpm_min: -100000.0
+  erpm_max: 100000.0
+  speed_source: 0
+drivetrain:
+  radius: 0.02794
+  pole_pairs: 1.0
+  torque_constant: 0.003621
+  phase_resistance: 0.0341
+  current_time_constant: 0.0006158357771260997
+  current_drive_max: 62.0
+  current_brake_max: 62.0
+  battery_voltage: 12.0
+  battery_drive_max: 250.0
+  battery_regen_max: 200.0
+  gear_efficiency: 0.9
+  front_diff_damping: 0.002
+  rear_diff_damping: 0.002
+  center_stiffness: 0.5
+  center_damping: 0.02
+  coupling_torque_max: 2.0
+  wheel_coulomb: 0.0002
+  wheel_viscous: 1.0e-05
+  wheel_inertia: 2.9274135e-05
+xml_geometry_reference:
+  wheel_diameter_m: 0.083
+  gear_ratio: 6.759
+  motor_invert_direction: 1.0
+  note: USD wheel diameter is 0.05588 m. Effective gearing is derived from gain and
+    USD radius; XML gearing is not multiplied again. Invert_direction is hardware
+    orientation, not a negative ROS forward speed.
+ros:
+  command_topic: /commands/motor/speed
+  brake_topic: /commands/motor/brake
+  output_topic: /sensors/core
+  publish_rate_hz: 50.0
+  command_timeout_s: 0.5
+  # PF uses stationary wheel samples for its startup gravity calibration.
+  publish_when_stopped: true
+  stop_threshold_erpm: 1.0
+scene:
+  vehicle_root: /World/RC_Car
+  chassis: /World/RC_Car/Chassis
+  rear_axle_offset_m:
+  - -0.1
+  - 0.0
+  - -0.04206

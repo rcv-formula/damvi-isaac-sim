@@ -1,0 +1,4 @@
+# path_loader reads this plain YAML from share/path_loader/config/config.yaml.
+# The CSV remains the unmodified 0821 dataset file through a path without spaces.
+# Columns: map x [m], map y [m], target speed [m/s].
+path: /home/shin/Desktop/multipath/driving_validation/data/0821.csv

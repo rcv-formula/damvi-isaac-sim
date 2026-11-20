@@ -1,0 +1,12 @@
+# Analytic normal contacts; tangential slip forces come from tires.yaml.
+# Spinning-wheel limits use rad/s in this file and degrees/s in USD.
+physics_worker_threads: 0
+broadphase: MBP
+wheel_collision_approximation: analytic
+wheel_collision_segments: 64
+max_wheel_angular_velocity_rad_s: 1000.0
+render_hz: 30.0
+min_frame_rate: 20.0
+realtime_wall_clock: true
+status_interval_s: 1.0
+trace_snapshot_interval_s: 0.0

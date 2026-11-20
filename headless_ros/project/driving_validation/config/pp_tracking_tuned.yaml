@@ -1,0 +1,8 @@
+pure_pursuit:
+  ros__parameters:
+    pose_preview_s: 0.18
+    path_tangent_gain: 0.55
+    understeer_rad_per_mps2: 0.018
+    min_lookahead: 0.7
+    max_lookahead: 1.85
+    lookahead_ratio: 4.0

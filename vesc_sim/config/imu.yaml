@@ -1,0 +1,48 @@
+# Synthetic sensor_msgs/Imu. Re-read on each simulator Play; no custom UI.
+# Real bag: /imu/data, frame_id imu, approximately 100 Hz. Requested simulator
+# default is 1000 Hz output with 200 Hz physics. Intermediate readings are
+# interpolated after each completed physics interval, not independent physics
+# measurements. No future state is extrapolated.
+enabled: true
+topic: /imu/data
+frame_id: imu
+sample_rate_hz: 1000.0
+sampling_mode: interpolated_physics_state
+# physics_state selects actual-tick measurements and rejects rates above physics_hz.
+qos_depth: 10
+
+# Mount translation and rotation live only in config/tf.yaml.
+# Must agree with the simulator's gravity. This is a world-frame SI vector.
+gravity_world_m_s2: [0.0, 0.0, -9.81]
+
+# World COM/angular velocity derivatives. Zero disables the low-pass filter.
+# A positive frequency uses an exact first-order pole at every physics tick.
+derivative_lowpass_hz: 0.0
+clock_jump_reset_s: 0.05
+random_seed: 0
+dropout_probability: 0.0
+
+# Defaults are ideal and have NOT been calibrated against real sensor noise.
+# Noise stddev is per published sample, not a spectral noise density.
+# Random walk is bias change per sqrt(second), advanced in simulation time.
+# Covariances are row-major 3x3 in SI. ROS interprets all-zero covariance as
+# unknown. The recorded bag uses 0.01 on every covariance diagonal; that is
+# metadata only and is not evidence that the simulated noise is 0.01.
+orientation:
+  enabled: true
+  bias_rotation_vector_rad: [0.0, 0.0, 0.0]
+  noise_stddev_rad: [0.0, 0.0, 0.0]
+  bias_random_walk_rad_per_sqrt_s: [0.0, 0.0, 0.0]
+  covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+gyroscope:
+  bias_rad_s: [0.0, 0.0, 0.0]
+  noise_stddev_rad_s: [0.0, 0.0, 0.0]
+  bias_random_walk_rad_s_per_sqrt_s: [0.0, 0.0, 0.0]
+  covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+accelerometer:
+  bias_m_s2: [0.0, 0.0, 0.0]
+  noise_stddev_m_s2: [0.0, 0.0, 0.0]
+  bias_random_walk_m_s2_per_sqrt_s: [0.0, 0.0, 0.0]
+  covariance: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

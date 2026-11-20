@@ -1,0 +1,37 @@
+# Parameters are shared by separately launched health_monitor and bt_main nodes.
+# PF localization runs independently. This BT only selects the planner path and
+# publishes obstacle flags; co-driver owns pp_main/gap_loc/gap_obs arbitration.
+health_monitor:
+  ros__parameters:
+    use_sim_time: true
+    IMU_TOPIC: /imu/data
+    LIDAR_TOPIC: /scan
+    # VESC speed telemetry may intentionally stop at rest. Watch the actual
+    # actuator command heartbeat here, as the original health monitor did.
+    # The mode UI is the sole publisher of the simulator's final command.
+    VESC_TOPIC: /cmd_vel
+    VESC_TYPE: geometry_msgs/msg/Twist
+    TIMEOUT_IMU: 0.5
+    TIMEOUT_LIDAR: 0.5
+    TIMEOUT_VESC: 1.0
+    GRACE_SEC: 0.0
+    DEBOUNCE_SEC: 0.3
+
+bt_main:
+  ros__parameters:
+    use_sim_time: true
+    bypass_critical: false
+    critical_fresh: 0.5
+    estop_succeed: false
+    cartographer_restart_enabled: false
+    # 0=auto; absent obstacle detections are treated as no obstacle.
+    obstacle_mode: 0
+    thresh_m: 15.0
+    static_thresh_m: 10.0
+    estop_thresh_m: 0.5
+    fresh: 0.3
+    half_angle_deg: 100.0
+    dynamic_min_speed_mps: 0.0
+    static_path_enter_m: 0.6
+    static_path_hold_m: 1.0
+    dynamic_static_overlap_m: 1.0

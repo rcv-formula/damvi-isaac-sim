@@ -1,0 +1,65 @@
+{
+  "wall_s": 10.090285143000074,
+  "sim_s": 8.549999808892608,
+  "realtime_factor": 0.8473496722561892,
+  "frames": 285,
+  "average_fps": 28.244989706531022,
+  "simulation_s_per_frame": 0.029999999329447746,
+  "imu_messages": 8550,
+  "scans": 342,
+  "physics_hz": 200,
+  "render_hz": 30.0,
+  "stage_time_codes_per_second": 30.0,
+  "timeline_target_framerate": 30.0,
+  "rate_limit_enabled": true,
+  "rate_limit_frequency": 30.0,
+  "fixed_timestep": false,
+  "error": null,
+  "windows": [
+    {
+      "wall_s": 1.0191895039970404,
+      "sim_s": 0.8699999805539846,
+      "realtime_factor": 0.8536194467682734
+    },
+    {
+      "wall_s": 1.0185350340034347,
+      "sim_s": 0.8699999805539846,
+      "realtime_factor": 0.8541679485823664
+    },
+    {
+      "wall_s": 1.0029268680009409,
+      "sim_s": 0.8999999798834324,
+      "realtime_factor": 0.8973734861419508
+    },
+    {
+      "wall_s": 1.015212985999824,
+      "sim_s": 0.8699999805539846,
+      "realtime_factor": 0.8569630142163444
+    },
+    {
+      "wall_s": 1.0272654110012809,
+      "sim_s": 0.7799999825656414,
+      "realtime_factor": 0.7592974261689308
+    },
+    {
+      "wall_s": 1.0026410409991513,
+      "sim_s": 0.8099999818950891,
+      "realtime_factor": 0.8078663736803636
+    },
+    {
+      "wall_s": 1.0032076089992188,
+      "sim_s": 0.8999999798834324,
+      "realtime_factor": 0.8971223621212917
+    },
+    {
+      "wall_s": 1.0186004299976048,
+      "sim_s": 0.8699999805539846,
+      "realtime_factor": 0.8541131094515937
+    },
+    {
+      "wall_s": 1.0278224339999724,
+      "sim_s": 0.8699999805539846,
+      "realtime_factor": 0.8464496899218372
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Sensor poses are relative to the rear-axle-centre base_link.
+# Used BOTH by physical sensor sampling and the central ROS /tf_static publisher.
+base_frame: base_link
+publish_static_tf: true
+provenance:
+  repository: https://github.com/rcv-formula/f1_stack_for_damvi
+  branch: red_damvi
+  file: f1tenth_stack/f1tenth_stack/tf_publisher.py
+  blob_sha: ea4ed59309d4d575aba8bf4f62b55674eaaf3c59
+  note: User-selected active transforms; commented camera transforms are not enabled.
+transforms:
+  - parent: base_link
+    child: laser
+    translation_m: [0.27, 0.0, 0.16]
+    rotation_rpy_deg: [0.0, 0.0, 0.0]
+  - parent: base_link
+    child: imu
+    translation_m: [0.27, 0.0, 0.06]
+    rotation_rpy_deg: [0.0, 0.0, 0.0]

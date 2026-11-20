@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
+*.log
+/backups/
+/work/
+/headless_ros/build/
+/headless_ros/install/
+/headless_ros/log/
+/headless_ros/logs/
+/headless_ros/deps/
+/headless_ros/episodes/
+/headless_ros/recordings/
+/headless_ros/run.lock
+/headless_ros/project/driving_validation/outputs/

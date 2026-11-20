@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "checks": {
+    "chassis_fixed": true,
+    "wheelspin_reported": true
+  },
+  "source": "PhysX wheelspin trace.csv, recorded in standalone run before GUI transfer; original report JSON serialization was fixed afterwards",
+  "samples": 201,
+  "max_chassis_speed_mps": 5.607312947297771e-10,
+  "max_wheel_equivalent_mps": 0.7764932069206237
+}

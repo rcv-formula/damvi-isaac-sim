@@ -1,0 +1,23 @@
+[
+  {
+    "viewport_updates": true,
+    "wall_s": 4.01176735899935,
+    "sim_s": 3.5149999214336276,
+    "realtime_factor": 0.8761724215011235,
+    "frames": 211
+  },
+  {
+    "viewport_updates": false,
+    "wall_s": 4.000864100999024,
+    "sim_s": 5.099999886006117,
+    "realtime_factor": 1.2747245988017029,
+    "frames": 306
+  },
+  {
+    "viewport_updates": true,
+    "wall_s": 4.005860144003236,
+    "sim_s": 3.4649999225512147,
+    "realtime_factor": 0.8649827497693128,
+    "frames": 208
+  }
+]

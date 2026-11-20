@@ -1,0 +1,695 @@
+// How obstacles and path geometry are judged - the scorers' own parameters.
+//
+// Split out for the same reason localization_scoring.jsonc is: these belong to
+// the scorers, not to the arbitration. The topics file next door is co_driver's
+// own layer - which drives exist and what weight each input carries. The one
+// arbitration rule kept here is the obstacle safety gate shared by pp_main and
+// gap_loc: it must move with commit_demand so a committed obstacle cannot first
+// hand the car to the localization fallback and wait through that drive's
+// keep_ms before reaching gap_obs.
+//
+// Deep-merged over co_driver_red_damvi_topics.jsonc at load, keyed by input
+// name. tuning_file takes a comma-separated list, so this and the localization
+// file are applied together:
+//
+//   -p tuning_file:=<share>/config/localization_scoring.jsonc,<share>/config/obstacle_scoring.jsonc
+//
+// Reload without restarting:
+//   ros2 service call /co_driver_node/reload std_srvs/srv/Trigger
+//
+// Three scorers live here and they answer different questions:
+//
+//   obstacles   is there an object on the line I am about to drive, close
+//               enough that I have to go around it now? Judged against the
+//               PLANNED path, not the current steering angle.
+//   clearance   is the command I am about to execute steering into structure?
+//               A last-moment check. Its veto is currently off - see the
+//               influence block in the topics file.
+//   off_path    is the car still anywhere near the line it is following? After
+//               a collision it can end up somewhere the plan never goes, and
+//               "drive back to the raceline" is then a command across whatever
+//               it is stuck against.
+{
+  "inputs": {
+    "obstacles": {
+      "params": {
+          // ── 무엇을 보고 판단할지 ──────────────────────────────────────
+        //
+        //   "clusters"  the detector's ObstacleClusterArray
+        //   "scan"      the lidar directly - accumulate scans, and take a place
+        //               on the line as blocked when enough of them agree
+        //
+        // Measured over the 0821-1 run, per decision, against gap_obs being
+        // the drive that was selected. Truth is one of the four objects added
+        // to the second half sitting on the line within 4 m ahead:
+        //
+        //                     TP    FP    FN     TN   정밀도  재현율     F1
+        //     clusters      1359   701  1680  17658   66.0%  44.7%  53.3%
+        //     scan          1450   162  1589  18451   90.0%  47.7%  62.4%
+        //
+        // The detector layer is where the information was being lost: 70% of
+        // its clusters are not labelled wall even when they are wall, an object
+        // leaning on a barrier is merged into it and disappears, and the
+        // reported centre is unreliable. None of that reaches the scan source.
+        // Its largest single object, 1.80 x 0.50 m against a barrier, went from
+        // being reacted to on 7 of 15 passes to 14 of 15 once the detector was
+        // out of the way.
+        //
+        // Set this back to "clusters" to fall back to the detector; nothing
+        // else has to change with it.
+        "source": "scan",
+
+        // 장애물 유무와 commit 시점은 후보 controller마다 달라지면 안 됩니다.
+        // VESC 속도가 fresh하면 아래 설정과 무관하게 실측값을 우선하고, stale이면
+        // pp_main의 live speed/steer 한 벌로 pp_main, gap_loc, gap_obs 모두의
+        // lookahead/commit geometry를 계산합니다. pp_main이 live가 아니면 가장 빠른
+        // live drive의 명령을 공통 fallback으로 쓰고, 그것도 없을 때만 각 후보의
+        // 명령으로 돌아갑니다. 따라서 pp_main=8, gap_loc=2인 순간에도 같은 6 m
+        // 장애물을 둘이 서로 다르게 판정하지 않습니다.
+        "reference_drive": "pp_main",
+
+        // ── "scan" 을 쓸 때 ─────────────────────────────────────────
+        //
+        // 규칙:
+        //   최근 scans_kept 장을 들고 있는다. 한 장에서, 차가 경로 위에서
+        //   차지하는 폭 안에 points_per_scan 개 이상 찍히면 그 장은 거기서 뭔가를
+        //   본 것이다. 그렇게 본 장이 충분히 많으면 막힌 자리다. "충분히"는
+        //   거리와 속도가 정하는데, 가까울수록 적게 - 2.5 m 안이면 한 장이면 -
+        //   멀고 빠를수록 많이 요구한다. 단 한 장에 dense_one_scan 개 이상 몰려
+        //   찍혔으면 그 한 장만으로 인정한다.
+        "scan_topic": "/scan",
+
+        // 경로 좌우로 얼마나 보는지는 여기서 정하지 않습니다. 차가 경로 위에서
+        // 차지하는 폭 그대로입니다 - 아래 vehicle_half_width + lateral_margin_m,
+        // 즉 클러스터 쪽이 쓰는 것과 같은 값입니다. 그 안에 있으면 피해야 하고
+        // 밖에 있으면 지나가면 됩니다. 따로 두면 증거가 어디서 왔느냐에 따라
+        // "내 길에 있냐"의 답이 달라집니다.
+
+        // 몇 장을 들고 있을지.
+        //
+        // 한 스캔은 한 자리에 대해 한 표만 던집니다. 여러 장의 점을 한꺼번에
+        // 세면 한 장의 잡음 몇 개가 혼자 임계를 넘습니다. 0821-1 에서 측정한
+        // 오검출 / 검출 / 1 m 이내 적중:
+        //     점을 한꺼번에 셈    0.9%   26.3%   93.5%
+        //     스캔당 한 표        0.1%   23.6%   99.5%
+        "scans_kept": 5,
+
+        // 한 장이 "봤다"고 하려면 그 자리에 최소 몇 점이 찍혀야 하는지.
+        "points_per_scan": 2,
+
+        // ── 아래 값들의 여유 (0821-1 에서 하나씩 쓸어본 결과) ──────────
+        //
+        // 벼랑에 붙어 있는 것 (건드리면 바로 나빠짐):
+        //   dense_one_scan   8 미만이면 장애물 없는 구간에서 헛 우회가 살아납니다
+        //                    (6 -> 10군데, 4 -> 16군데). 위로는 12, 99 다 안전하고
+        //                    검출도 거의 안 줄어듭니다.
+        //   wall_longer_than_m  2.5 로 올리면 껐을 때와 같아집니다 (헛것 5군데).
+        //                    1.5 까지는 0 이고 검출이 조금 늡니다.
+        //
+        // 여유 있는 것:
+        //   car_width_until_m   0.8 / 1.5 / 2.5 다 헛 우회 0. 노드에서 재보니
+        //                    1.5 가 우회 40회 / 시작 정확도 100% / 유지 중 90% 로
+        //                    가장 좋았고, 0.8 은 35회 87%, 속도항까지 완화하면
+        //                    36회 97% 86% 로 더 나빠집니다.
+        //   points_per_scan  1 과 2 는 거의 같고, 3 부터 먼 곳 경고 거리가 줄고
+        //                    (7.3 -> 6.1 m), 4 면 무너집니다 (2.3 m).
+        //   scans_kept       3 은 헛것이 크게 줄지만 (92 -> 42) 검출도 줄고,
+        //                    7 이상은 헛것만 늡니다 (225, 373).
+        //   same_place_m     0.15 면 먼 물체가 둘로 갈립니다 (경고 7.3 -> 2.3 m).
+        //                    0.45 면 헛것은 줄지만 검출이 401 로 떨어집니다.
+        //
+        // 자리를 몇 개 잡느냐로 고르면 안 됩니다. 오프라인에서 "진짜 자리"가
+        // 516 -> 704 로 늘어난 설정이 노드에서는 우회가 40 -> 36 회로 줄었습니다.
+        // 같은 물체를 여러 번 잡는 것과 더 일찍 잡는 것은 다른 얘기고, 우회를
+        // 만드는 것은 뒤쪽입니다.
+
+        // 가까이 있는 것은 경로 위에 있는지가 아니라 차가 부딪히는지로 봅니다.
+        //
+        // 이 둘은 차가 경로 위에 있을 때만 같은 말입니다. 0821-1 에서 헛 우회
+        // 658 개 중 614 개가 랩의 한 지점(경로 12~13 m)에서 나왔고, 그때 차는
+        // 경로에서 0.43 m 벗어나 있었습니다. 옆의 벽이 라이다에서 0.5 m, 경로를
+        // 따라 앞으로 0.24 m 였는데 - 옆으로 0.44 m 라 차 근처도 아닌데 - 경로
+        // 에서는 0.05 m 였습니다. 경로가 거기 있었기 때문입니다.
+        //
+        // 이 거리보다 멀면 차가 경로로 돌아와 있을 것이므로 다시 경로로 봅니다.
+        "car_width_until_m": 1.5,
+
+        // 멀리 있는 것일수록 경로 폭을 좁혀서 봅니다.
+        //
+        // 넓히는 게 아니라 좁힙니다. 멀리서 온 반환일수록 자리를 잘 못 잡습니다 -
+        // 놓는 데 쓰는 자세가 더 오래됐고, 빔 사이가 더 벌어져 있고, 스윕 동안 차가
+        // 더 움직였습니다. 그래서 멀리서는 경로 옆의 벽이 경로 쪽으로 번집니다.
+        // 벽은 실제로 경로에 닿지 않습니다. 멀리 있는 반환일수록 경로 한가운데에
+        // 가까워야 믿어주는 것이 둘을 가르는 방법이고, 정작 중요한 순간에는 아무것도
+        // 잃지 않습니다 - 차가 가까워지면 폭이 원래대로 돌아오기 때문입니다.
+        //
+        //   보는 폭 = (차 폭) - narrow_per_m x 거리      (never_narrower_than_m 까지)
+        //
+        // 여기까지가 이론이고, 0821-1 에서 재보니 성립하지 않아서 기본값 0(끔) 입니다.
+        // 장애물 없는 구간에서 걸린 그 한 자리는 5.9 m 에서 경로로부터 1.3 cm 로
+        // 읽혔습니다 - 진짜 장애물 4개 중 2개보다도 경로에 가깝습니다. 조금 번져
+        // 들어온 게 아니라 경로 위에 놓인 것이라 어떤 기울기로도 안 갈립니다.
+        // 그걸 자를 만큼 세게(0.035) 하면 진짜 장애물의 경고 거리가 6.8 m -> 2.6 m
+        // 로 무너집니다. 위의 wall_longer_than_m 이 같은 일을 공짜로 합니다.
+        "narrow_per_m": 0.0,
+        "never_narrower_than_m": 0.05,
+
+        // 경로를 따라 이만큼 길게 이어지면 물체가 아니라 벽입니다.
+        //
+        // 지도를 빼는 방법을 안 쓰는 이유는, 지도를 빼면 벽에 붙어 서 있는 상대차
+        // 까지 같이 지워지기 때문입니다. 길이는 지도 없이 둘을 가릅니다 - 콘도
+        // 드럼통도 다른 차도 짧고, 벽은 몇 미터씩 이어집니다.
+        //
+        // 0821-1 에서 측정: 진짜 장애물이던 자리는 경로 방향 길이가 중앙값 0.25 m
+        // 이고 1.0 m 를 넘은 것이 1% 뿐이었습니다. 장애물이 하나도 없는 전반부에서
+        // 걸린 자리 5군데는 전부 1.93 m 였습니다.
+        // 0 이면 끕니다. 아래 biggest_thing_m 이 같은 일을 더 낫게 하므로 껐습니다.
+        // 이건 경로 방향으로 얼마나 이어졌는지만 봐서, 벽을 비스듬히 보면 짧게
+        // 나옵니다. 그리고 2.5 로 올리면 곧바로 무력해지는 벼랑 위의 값이었습니다.
+        "wall_longer_than_m": 0.0,
+
+        // 몇 장이 같은 말을 해야 믿을지는 고정값이 아닙니다.
+        //
+        // 코앞에 있는 것은 지금 피해야 하고 두 번째 의견을 기다릴 시간이 없습니다.
+        // 멀리 있는 것은 급하지 않으니 증거를 더 요구해도 됩니다. 속도도 같은
+        // 방향으로 작용합니다 - 빠를수록 더 먼 곳을 보고 판단하게 되고, 그만큼
+        // 증거가 약한 곳에서 결정하는 것이기 때문입니다.
+        //
+        //   필요한 장수 = 1 + (거리 - one_scan_within_m) / add_scan_every_m
+        //                   + 속도 / add_scan_every_mps      (최대 scans_kept)
+        //
+        // one_scan_within_m 은 하한입니다. 이 안에 들어온 것은 무조건 한 장이면
+        // 됩니다. 움직이는 물체는 원리적으로 같은 자리에 여러 장 연속으로 안
+        // 찍히므로, 이 하한이 없으면 가장 중요한 경우가 지워집니다.
+        "one_scan_within_m": 2.5,
+        "add_scan_every_m": 2.0,
+        "add_scan_every_mps": 3.0,
+
+        // 한 장에 이만큼 몰려 찍혔으면 다음 장에서 옮겨갔더라도 거기 있는 것입니다.
+        "dense_one_scan": 8,
+
+        // 한 스캔 안에서 무엇이 "한 물체"인지는 거리 문턱이 아니라 빔 순서대로
+        // 자릅니다. Borges & Aldon (JIRS 2004) 의 adaptive breakpoint detector 이고,
+        // ForzaETH 의 F1TENTH 스택이 상대차를 찾는 데 쓰는 것과 같습니다.
+        //
+        //   D_max = 앞 점 거리 x sin(빔각도) / sin(surface_grazing_deg - 빔각도)
+        //           + 3 x range_noise_m
+        //
+        // 이웃한 두 반환이 이보다 가까우면 같은 표면입니다. 고정 거리로는 가까운
+        // 곳과 먼 곳을 동시에 맞출 수 없고, 재보니 정확히 그랬습니다 - 0.15 m 면
+        // 먼 물체가 둘로 갈려 경고 거리가 7.3 -> 2.3 m 가 되고, 0.45 m 면 검출이
+        // 1/5 줄었습니다.
+        //
+        // surface_grazing_deg 는 표면을 얼마나 비스듬히 봐도 한 표면으로 칠지이고,
+        // range_noise_m 은 라이다 거리 잡음입니다. 둘 다 센서와 기하의 값이지
+        // 맞춰 넣는 값이 아닙니다.
+        "surface_grazing_deg": 10.0,
+        "range_noise_m": 0.03,
+
+        // How a surface longer than biggest_thing_m is handled.
+        //
+        //   size      current production rule: discard the complete surface.
+        //   polyline  EXPERIMENTAL: recursively fit locally straight pieces.
+        //             A long wall stays long and is discarded, while a short
+        //             protrusion attached to it can split off and survive.
+        //             A smooth curved wall is represented by several lines.
+        //   swept    EXPERIMENTAL: keep every raw deskewed return that enters
+        //             the existing vehicle-width corridor around the planned
+        //             path. Adaptive surfaces still group points and temporal
+        //             votes, but biggest_thing_m cannot discard an in-path
+        //             return merely because it belongs to a long wall.
+        //
+        // The fitted lines only decide where one oversized surface is split.
+        // They never move the raw scan points and are never joined back by
+        // angle: doing either would discard the foreground/occlusion evidence
+        // for which the direct scan source exists.
+        //
+        // The production default remains size until the bag comparison shows
+        // that polyline recovers attached objects without turning corner walls
+        // into obstacle handovers.
+        "surface_model": "size",
+        // Orthogonal error that causes one long surface to be split. The
+        // optional range term lets a later experiment account for increasing
+        // placement uncertainty without hiding it inside the base tolerance.
+        "surface_fit_error_m": 0.05,
+        "surface_fit_error_per_m": 0.0,
+        // Each side of a split must keep this many beams. This equals the
+        // per-scan evidence floor, so the split cannot manufacture a one-beam
+        // obstacle which could never vote on its own anyway.
+        "surface_fit_min_points": 2,
+        // Tighten only the lateral corridor used by pieces recovered from a
+        // surface which the legacy size rule would discard. Ordinary objects
+        // retain lateral_margin_m, so this can reject a wall-edge split without
+        // reducing the established warning distance for normal scan surfaces.
+        // The 0.08m candidate removed the labelled 638s wall/noise split while
+        // retaining the labelled 81/261/472/739s safety-positive sequences in
+        // the test_16 bag. Keep validating it on other bags before enabling the
+        // polyline model; 0 disables the experimental distinction.
+        "surface_recovered_margin_cut_m": 0.08,
+        // 이보다 큰 표면은 피할 물체가 아니라 트랙 자체입니다.
+        //
+        // 위처럼 자르고 나면 표면의 실제 크기를 끝에서 끝까지 잴 수 있습니다.
+        // 0821-1 에서 진짜 장애물이 있던 자리의 표면은 중앙 0.13 m, 가장 큰 것이
+        // 0.91 m 였고, 헛것 쪽에는 10.6 m 짜리가 섞여 있었습니다. 0.6 m 부터
+        // 3.0 m 까지 결과가 완전히 같습니다 - 그 사이에 아무것도 없습니다.
+        "biggest_thing_m": 1.5,
+
+        // 이만큼 안에서 본 것은 같은 물체로 칩니다. 스캔과 스캔 사이에서 같은
+        // 자리인지를 맞추는 용도이고, 한 스캔 안에서 무엇이 한 물체인지는 위의
+        // 세그먼트가 정합니다. 격자가 아니라 거리로 묶어서, 격자 경계에 걸친
+        // 물체가 둘로 갈리지 않습니다.
+        "same_place_m": 0.30,
+
+        // 빔을 몇 개마다 쓸지. 위의 점 개수 조건은 실제로 쓰는 빔에서 셉니다.
+        "beam_stride": 3,
+
+        // 빔 하나하나를 그 빔이 찍힌 순간의 자세로 놓습니다. UST-10LX 는 1081빔을
+        // 25 ms 에 훑는데 5 m/s 면 그 사이 12 cm 를 가므로, 스캔 전체를 한 자세에
+        // 놓으면 물체가 번지고 누적한 스캔들이 서로 안 맞게 됩니다. 그 일치가
+        // 판단의 전부이므로 번지면 안 됩니다. 스윕 시작과 끝 두 번만 조회하고
+        // 사이를 보간하므로 빔마다 조회하지 않습니다.
+        "deskew": true,
+
+        // ── "clusters" 를 쓸 때의 설정 ────────────────────────────────
+        "topic": "/obstacle_clusters",
+          // Judged against the PLANNED line, not the current steering angle.
+          // The steering angle swings with every correction and says nothing
+          // about the corner after this one; the plan is where the car is
+          // actually going. The plan's z coordinate carries the planned speed,
+          // which is what decides how much room the manoeuvre needs.
+          //
+          // /Path is updated continuously and is reliable + volatile. The
+          // callback replaces the path on every message; requesting transient
+          // local here would be QoS-incompatible and receive nothing. The csv
+          // remains the standby for a car whose planner is not running.
+          // Current speed comes straight from the VESC, so a localization jump
+          // cannot stretch or shrink the obstacle horizon. red_damvi's
+          // vesc_to_odom conversion is:
+          //   raw_mps = (state.speed[ERPM] - offset) / gain
+          // with a 0.05 m/s deadband. On this car that raw result reads about
+          // 2.6x below the speed domain used by the controller, so the correction
+          // is deliberately a separate parameter rather than hidden in the gain.
+          "vesc_state_topic": "/sensors/core",
+          "speed_to_erpm_gain": 3176,
+          "speed_to_erpm_offset": 0.0,
+          "wheel_speed_deadband": 0.05,
+          "wheel_speed_scale": 2.6,
+          "speed_timeout_ms": 300,
+          "path_topic": "/Path",
+          "path_transient_local": false,
+          "path_csv": "",
+          "path_frame": "map",
+          "base_frame": "base_link",
+          "tf_timeout_ms": 200,
+          // Diagnostics only. The geometry uses the speed the car is actually
+          // carrying - see obstacle_avoid.cpp for the measurement that settled
+          // this. Using the planned speed on a car driven below its plan makes
+          // every distant object urgent.
+          "use_path_speed": false,
+  
+          // Commit distance is derived from the manoeuvre, not tuned:
+          //   speed x (reaction + sqrt(2 x lateral_need / lateral_accel))
+          // reaction conservatively covers the 150 ms detection hold, the
+          // 100 ms handover blend, and controller/scheduling margin. At 7 m/s
+          // with a 0.73 m corridor and 5 m/s^2 that is 7.8 m.
+          // This is what "stay on the fast controller until the last moment it
+          // is still avoidable" means in numbers.
+          "reaction_time": 0.8,
+          "lateral_accel": 5.0,
+          "commit_margin_m": 0.8,
+          // Must equal veto_below on pp_main below (score = 1 - demand). Keeping
+          // them in step is what makes "commit distance" a real distance.
+          "commit_demand": 0.85,
+          // Equal to commit_demand: no extra hold. This existed to damp the
+          // handovers that appeared when the arbitration's switch_cooldown was
+          // bypassed on a gate-forced return. That bypass was measured and
+          // reverted (see co_driver_node.cpp), so the cooldown supplies the
+          // damping again and a second layer of it only costs occupancy -
+          // measured, the obstacle veto went from 32.2% to 41.7% of the drive
+          // with nothing to show for it. Lower it only if handovers ever
+          // reappear without the cooldown being involved.
+          "release_demand": 0.6,
+  
+          // Reported cluster positions wander, and more so far away (fewer beams
+          // on the object, coarser angular quantisation) and fast (more ego
+          // motion between the scan and this decision). The on-path test is
+          // softened by this spread instead of pretending the lateral offset is
+          // exact, so a cluster near the corridor edge grades rather than
+          // flickering in and out.
+          //
+          // Measured on the 0814 recording by tracking each cluster by track_id
+          // and taking the frame-to-frame movement perpendicular to the line of
+          // sight - 20353 samples. The 90th percentile fits
+          //     jitter = 0.001 + 0.0358 x range
+          // almost exactly (p90 by band: 0.072 / 0.080 / 0.153 / 0.252 / 0.346
+          // at 1 / 3 / 5 / 7 / 9 m). Range is the whole story.
+          //
+          // Speed is NOT: holding range fixed, the same p90 does not rise with
+          // speed (0.089 / 0.060 / 0.106 / 0.082 across speed bands at 2-4 m).
+          // The apparent speed trend in the raw numbers is range in disguise -
+          // the car was only fast where the obstacles were far. The small speed
+          // term that remains is an allowance for ego motion between the scan
+          // stamp and this decision, not a measurement, and it is UNVERIFIED
+          // above 2.33 m/s, which is as fast as that recording ever went.
+          //
+          // The detector measured the same quantity on 0813 with ego motion
+          // removed and got roughly half the slope (lateral p90 6.0 cm at 1.2 m
+          // rising to 15.8 cm at 8.8 m). The larger figure is used, because this
+          // spread only ever widens the grey band at the corridor EDGE - an
+          // obstacle actually on the line still scores a full 1.0 however large
+          // the spread is - so overestimating costs decisiveness at the margin
+          // and nothing else.
+          "jitter_base_m": 0.02,
+          "jitter_per_m": 0.036,
+          "jitter_per_mps": 0.02,
+  
+          // Once the obstacle's station on the plan is behind us it is passed,
+          // which is geometry rather than a timeout, so the return is quick.
+          "passed_clear_ms": 250,
+          // Holding the detour on memory alone while the obstacle's place on the
+          // plan is still ahead. Tried at 2500 and measured worse - 4 points of
+          // occupancy for no reduction in handovers - so the splitting it was
+          // meant to prevent was not coming from forgetting. 0 disables it.
+          "remember_cap_ms": 0,
+          "wheelbase": 0.324,
+          "vehicle_half_width": 0.18,
+          // Extra room either side of the vehicle when deciding "on the path".
+          // 0.55 m is from the 0813 recording: the three real objects on that
+          // track are only caught from 0.50 m upward, and 0.50-0.60 m all give
+          // the same result, so this sits in the middle of the verified band.
+          // Avoidance wants more room than "will just barely miss" - this is not
+          // the last-moment check, that is path_clearance.
+          // Narrow on purpose. The two objects placed on the 0814 track sit
+          // 0.02 m and 0.03 m from the planned line - dead centre, which is why
+          // the car drove into one of them - so a corridor does not need to be
+          // wide to catch a real obstacle. What a wide one catches instead is
+          // structure: over the stretch of that lap with no object on it at all,
+          // 67.8% of samples were disqualified on obstacles, against detections
+          // reported 2.6-4.0 m ahead "on the plan" - corner walls the detector
+          // had not labelled as wall.
+          //
+          // With the configured 0.18 m half-width, 0.12 m puts the normal
+          // obstacle corridor at 0.30 m either side of the planned line.
+          "lateral_margin_m": 0.12,
+          // an obstacle anywhere on the commanded path within this much travel
+          // is reason to go around it (bounded, so it stays sane at any speed)
+          //
+          // The two bounds were widened after the 0813 joint run. They exist to
+          // keep the window sane at the speed extremes, but set too tight they
+          // close the graded band entirely, and the demand becomes a step:
+          // measured over 18337 status samples, NOT ONE fell in the graded
+          // 0.01-0.85 range - every non-zero sample was already past the veto.
+          // At that run's 0.6-1.7 m/s the old min_trigger 1.0 clamped the
+          // trigger while full urgency floated free, leaving well under half a
+          // metre between "noticed" and "committed". The old max_trigger 4.0
+          // does the same at the other end: past ~2.7 m/s the trigger stops
+          // growing while full urgency keeps up with speed, and the band closes
+          // again. 2.0 / 6.0 keeps at least ~1.2 m of graded approach from
+          // 0.5 m/s to 6 m/s.
+          //
+          // This changes nothing in the mid range: at 2.5 m/s the trigger is
+          // 1.5 x v = 3.75 m either way, so the commit distance the regression
+          // suite pins (2.0 m static / deferred dynamic) is untouched.
+          // Sized for the speeds the plan actually asks for. The raceline on
+          // this track calls for up to 8.0 m/s, and at 7 m/s a 6 m cap is 0.86 s
+          // of travel - less than the manoeuvre needs, so the car would arrive
+          // at the commit distance the same instant it first noticed anything.
+          // 2.5 s of travel, capped at 14 m, gives 17.5 m of intent at 7 m/s.
+          //
+          // NOTE the real ceiling is the detector, not this: it publishes
+          // nothing beyond max_valid_range (10.0 m as of the 0814 recording,
+          // where the furthest of 35076 clusters was exactly 10.00 m). Until
+          // that is raised, 7 m/s leaves only ~2.7 m between first sight and the
+          // commit distance. Raising the cap here costs nothing and stops
+          // co_driver being the limit once the detector's range grows.
+          "trigger_time": 2.5,
+          "min_trigger_m": 3.0,
+          "max_trigger_m": 14.0,
+          // Urgency is measured in time of travel, not metres, so speed decides
+          // what counts as close: inside this many seconds of travel the demand
+          // is full, and it fades out to the trigger distance. Seeing an
+          // obstacle is not a reason to hand over - being about to arrive at
+          // one is.
+          //
+          // full_urgency_time is deliberately NOT lowered to open the band -
+          // it sets the commit distance, and at 2.5 m/s dropping 0.8 -> 0.6
+          // would move the commit from 2.0 m to 1.5 m, i.e. 0.6 s of travel,
+          // against a 150 ms detection hold plus a 100 ms blend. The band is
+          // opened from the trigger end, where being early costs nothing but a
+          // rising bar on the status stream.
+          "full_urgency_time": 0.8,
+          "min_full_urgency_m": 0.8,
+          // DYNAMIC-labelled clusters get a shorter window, i.e. we commit to
+          // the detour later. The label is velocity-derived and not reliable,
+          // but it only appears when the relative speed is high, and something
+          // moving fast may have moved on by the time we arrive. Using it only
+          // to be MORE conservative means a wrong label costs nothing. Note the
+          // car runs the detector in STATIC_ONLY mode, where DYNAMIC is
+          // overwritten before publication - this is inert there until that
+          // changes.
+          "dynamic_urgency_scale": 0.6,
+          // and never more than this much ground, whatever the speed. The
+          // detector's false-DYNAMIC rate climbs with ego speed (5% below
+          // 1 m/s, 31% at 5-6 m/s) exactly as the cost of a late commit climbs
+          // with it. Scaling alone lets both grow together; this bounds it.
+          "dynamic_delay_max_m": 0.5,
+          // Confidence, not threat. max_dense_weight is a range-normalised
+          // spatial accumulation over ~7 frames, independent of the velocity
+          // estimates; low values are transient or noise clusters (the detector
+          // measured a spurious corridor intrusion at 0.0 with 7 points). Real
+          // objects on 0813 sit at p10 55.6 / median 80.4, so 20 is a floor that
+          // rejects noise without touching them. It is NOT a wall filter -
+          // structure scores higher on this field, not lower.
+          "dense_full": 20.0,
+          // Note: the detector zeroes max_dense_weight, observed_count,
+          // is_wall_static and track_id when its odom input is unavailable.
+          // An all-zero trust signature is read as "cannot measure" rather than
+          // "not trustworthy", and the cluster is judged on geometry alone -
+          // otherwise losing localization would quietly turn obstacle avoidance
+          // off at exactly the wrong moment.
+          // Drop single-frame flickers only. Higher would delay reacting to a
+          // newly appeared object, which is exactly when reacting matters.
+          // A young track is discounted, not erased. observed_count resets every
+          // time the detector loses association, and association is the first
+          // thing speed breaks: at 5-6 m/s the centroid moves up to 49.8 cm
+          // between frames against a 60 cm gate and association falls from
+          // 90-97% to 81%. Erasing on track age made real obstacles disappear
+          // exactly when the car was fast enough to need them.
+          //
+          // 1.0 = no discount: rely on block_ms (150 ms, six frames at 40 Hz)
+          // to reject flicker, which is a filter the detector's association
+          // cannot break. Lower this only with a measurement showing spurious
+          // clusters that survive 150 ms.
+          "min_observed": 2,
+          "immature_scale": 1.0,
+          // The forward test is not an angle any more. A cluster is judged
+        // against the stretch of the planned line from the car forward by the
+        // trigger distance - see path_reference.hpp - so the region considered
+        // bends with the course instead of being a wedge pinned to the car's
+        // heading. A fixed cone does not follow the steering, and the problem
+        // it was patching was never angular: it was that taking the closest
+        // point on the WHOLE lap let something abeam match the leg the car
+        // drives later. On the 0821-1 run that accounted for 37 of 495 on-path
+        // judgements, at a median of 9.45 m away.
+        "max_sweep_deg": 90.0,
+          "min_speed": 0.2,
+          // Wall-labelled clusters are skipped - but the detector only considers
+          // the label at 1.0 m and wider, so a wall fragment or guard-rail
+          // section narrower than that arrives as an ordinary obstacle and will
+          // be avoided. The fixed structure 0.75 m off the right flank in the
+          // 0813 recording is 0.91 m wide and can never be labelled. This is a
+          // partial filter, not wall rejection.
+          // A wall-labelled cluster is no longer thrown away - it is held to a
+        // tighter corridor. The detector merges an object into the barrier it
+        // is touching and labels the result wall, so anything placed against
+        // the wall vanished from this scorer completely. Differencing the two
+        // halves of the 0821-2 run finds no new scan returns at all, because
+        // the added object sits in cells the wall already occupied.
+        //
+        // The racing line runs through drivable space, so a mapped wall is
+        // never on it. Requiring a wall-labelled return to be inside the
+        // vehicle's own width of the line - margin removed - keeps barriers
+        // out while catching what is leaning on them.
+        "ignore_wall_static": true,
+        "wall_margin_cut_m": 0.10,
+          // Off. What is an obstacle and what is structure is the detector's
+          // call, not co_driver's - this node does not detect obstacles, it
+          // receives them and decides only whether they sit on the commanded
+          // path. The detector already drops anything wider than 3 m and labels
+          // what it judges to be wall; second-guessing that with a width of my
+          // own was overreach, and the measurements agreed: across five datasets
+          // real objects and sub-1 m structure share the same width distribution
+          // to two decimals, so no threshold here separates them anyway.
+          //
+          // Consequence, accepted by the user: an unlabelled wall fragment on
+          // the path is avoided like any other obstacle. On 0813 that is 2 extra
+          // handovers per run alongside the 3 real ones. Reacting to a wall
+          // costs a little speed; deciding for ourselves that something is not
+          // an obstacle risks driving into one.
+          // A safety cap, not a classifier. Nothing narrower than this is ever
+          // judged on its size; the cap only removes returns too wide to be an
+          // object at all. The detector measured real objects and sub-metre
+          // structure to have identical width distributions (p50 0.37, p75
+          // 0.55), so a bar at 1.0 sits clear of anything a real obstacle has
+          // measured, and 0.6 - tried earlier - cut into them.
+          //
+          // Chosen by sweeping the 0814 drive, four settings on the same run
+          // (pp_main share / share at 4-5 m/s / handovers / avoidance episodes
+          // kept out of 28):
+          //   off                49.9%  24.0%  66  28/28
+          //   width 1.0          55.1%  42.3%  52  24/28   <- this
+          //   margin 0.30        52.8%  29.6%  66  28/28
+          //   width 1.0+mgn 0.40 57.0%  42.8%  50  23/28
+          //
+          // The four episodes this drops were each inspected: all 0.24-0.38 s
+          // long, against clusters of median width 0.82-1.17 m (up to 2.82 m) at
+          // 6.2-8.1 m. Wide, far and brief - wall fragments the detector did not
+          // label as wall. Narrowing the corridor instead keeps every episode but
+          // saves no handovers at all and splits 28 encounters into 32.
+          //
+          // The 0.40 margin was rejected despite the best numbers: the extra
+          // episode it loses is a 0.31 m-wide cluster at 3.84 m, which is the
+          // shape of a real object. Buying 1.9 points of occupancy by shaving
+          // lateral clearance is not this scorer's call to make.
+          "max_width_m": 1.0,
+          "min_point_count": 0,
+          // Return once the path is clear - nothing was wrong with pp_main, it
+          // was simply occupied. Contrast the clearance check's 5000 ms.
+          //
+          // 1200 ms, raised from 700. On the 0813 run the five detours each ran
+          // 0.86-1.10 s of demand and every one of them returned at exactly
+          // 1.50 s - the arbitration's switch_cooldown_ms, not this hold. That
+          // is the wrong thing to be in charge of the return: the cooldown is a
+          // flap guard that knows nothing about where the obstacle is, and at
+          // 1.5 s the car can still be alongside it when pp_main resumes and
+          // steers back toward the raceline. 1200 ms puts this hold above the
+          // cooldown floor, so the return is once again driven by the obstacle
+          // having gone past - 2.4-4.8 m of travel at 2-4 m/s, comfortably
+          // clear of anything the detector reports as a cluster.
+          // Presence is judged across a window of scans rather than on the
+          // current one: a real object is reported lap after lap, while corner
+          // structure thrown onto the line by map distortion comes and goes.
+          // 600 ms is 24 scans at 40 Hz; it must be seen in 65% of them to
+          // count, and fall under 25% to stop counting.
+          "presence_window_ms": 900,
+          "presence_enter": 0.55,
+          "presence_exit": 0.20,
+          // A sample counts only if it names the same place on the line as the
+          // rest of the window. A fixed object does; structure thrown onto the
+          // line by map distortion does not, because a different piece of wall
+          // is reported each time. This is what makes a longer window worth
+          // having - lengthening it alone would only delay the commit, and at
+          // 7 m/s there is no range to spare for that.
+          "presence_station_tolerance_m": 1.0,
+          "block_ms": 150,
+          "clear_ms": 700,
+          "timeout_ms": 500
+        }
+    },
+
+    "clearance": {
+      "params": {
+          "topic": "/scan",
+          // Same localization-independent VESC speed as the obstacle scorer.
+          "vesc_state_topic": "/sensors/core",
+          "speed_to_erpm_gain": 3176,
+          "speed_to_erpm_offset": 0.0,
+          "wheel_speed_deadband": 0.05,
+          "wheel_speed_scale": 2.6,
+          "speed_timeout_ms": 300,
+          "wheelbase": 0.324,
+          "vehicle_half_width": 0.18,
+          // how far ahead to look: lookahead_time x speed, bounded
+          "lookahead_time": 1.0,
+          "min_lookahead_m": 0.5,
+          "max_lookahead_m": 3.0,
+          // below this much free path along the command, the drive is blocked
+          "min_clearance_m": 0.8,
+          // a crawling command cannot run into anything soon
+          "min_speed": 0.2,
+          // stop projecting after this much heading change - a command is a
+          // snapshot, not a trajectory. At full lock the arc is a 30 cm circle,
+          // and following it further curls the corridor into whatever is beside
+          // or behind the car (measured: two vetoes on the 0813 run from an
+          // object off the right flank, reached only after 140 degrees of sweep,
+          // with the path ahead open at 2.86 m). Gentle steering sweeps only a
+          // few degrees, so normal driving is unaffected.
+          "max_sweep_deg": 90.0,
+          // One noisy sweep is not evidence. Clearing is deliberately slow: a
+          // drive that commanded a path into structure keeps the veto until it
+          // has commanded a clear one for five seconds.
+          //
+          // Five, not two, because returning costs ~2.2 s anyway (switch
+          // cooldown plus selection margin) and anything under that floor is
+          // absorbed by it. Measured at 2000 ms: clearance returned in 2.11 s
+          // against the obstacle detour's 2.25 s - the intended asymmetry did
+          // not exist. This is the knob that separates the two roles, so it has
+          // to be above the floor to do anything.
+          "block_ms": 200,
+          "clear_ms": 5000,
+          "timeout_ms": 500
+        }
+    },
+
+    "off_path": {
+      "params": {
+          "path_topic": "/Path",
+          "path_transient_local": false,
+          "base_frame": "base_link",
+          // The line runs 0.7-1.0 m from the walls on this track, so 1.5 m off
+          // it is outside the drivable corridor rather than a wide entry.
+          "max_deviation_m": 1.5,
+          "trip_ms": 400,
+          "clear_ms": 800
+        }
+    },
+
+    "corner": {
+      "params": {
+          "path_topic": "/Path",
+          "path_transient_local": false,
+          "base_frame": "base_link",
+
+          // 여기서 계획된 속도가 이보다 느리면 코너로 봅니다.
+          //
+          // 경로가 자기 속도를 들고 있습니다 - 생산자가 각 pose 의 z 에 넣습니다 -
+          // 그래서 어디가 느린지는 경로 자신이 말해주고, 레이싱 라인에서 느리다는
+          // 것은 타이트하다는 뜻입니다. 차의 실제 속도로는 코너인지 앞차 때문인지
+          // 구분이 안 되고, 점들에서 곡률을 계산하면 이 경로의 샘플 간격에서는
+          // 잡음이 큽니다.
+          "slow_below_mps": 3.0,
+
+          // 그리고 지도 컨트롤러가 이보다 크게 꺾어달라고 하고 있으면.
+          //
+          // 반응형이 차를 몰고 있는 동안에도 pp_main 은 계속 발행하므로, 여기서
+          // 재는 것은 "넘겨받으면 이렇게 몰겠다"는 그 명령입니다. 둘 다여야 합니다 -
+          // 지도 컨트롤러가 직진으로 통과할 느린 구간은 틀릴 코너가 아니고,
+          // 경로가 빠른데 조향이 크면 그냥 직선에서의 보정입니다.
+          "steering_above_deg": 15.0,
+
+          // 조건이 풀린 뒤에도 이만큼 더 붙잡습니다.
+          //
+          // 거는 쪽은 즉시입니다 - 늦게 거는 것이 이 게이트가 막으려는 일 자체라
+          // 두 조건이 처음 맞는 주기에 바로 겁니다. 푸는 쪽만 시간을 두어, 조향이
+          // 한 프레임 펴졌다고 코너 안에서 차를 돌려주지 않게 합니다.
+          "clear_ms": 300
+        }
+    }
+  },
+
+  // A committed obstacle must leave gap_obs as the only valid reactive drive.
+  // pp_main already has the identical veto in the base topics file. Applying it
+  // to gap_loc here prevents the score EMA from choosing /drive_gf first and
+  // then charging gap_loc.keep_ms plus a second switch_blend before /drive_gf2.
+  // reference_drive above also makes both vetoes consume the same geometry;
+  // without it, stale VESC telemetry could let a slower gap_loc command see a
+  // shorter trigger distance and remain valid even though pp_main was vetoed.
+  // Keep this equal to 1 - commit_demand above (score = 1 - demand).
+  "drives": {
+    "gap_loc": {
+      "influence": {
+        "obstacles": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.15}
+      }
+    }
+  }
+}

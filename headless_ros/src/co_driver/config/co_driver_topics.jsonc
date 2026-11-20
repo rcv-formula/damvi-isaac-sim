@@ -1,0 +1,137 @@
+// co_driver topic list - only the things that keep growing live here.
+//
+//   inputs[] : judgment material. One element = one scorer (src/scorers/) instance
+//   drives[] : /drive candidate topics
+//   influence: how much, and in what shape, input i affects drive j's score
+//
+// Base settings (output / context / vehicle / scoring / selection / postprocess /
+// defaults.influence) live in config/co_driver.yaml.
+//
+// -- Adding entries -----------------------------------------------------
+//   Add a drive: one {"name": ..., "topic": ...} block in "drives"
+//   Add an input: one {"name": ..., "type": ..., "hold_ms": ...} block in "inputs"
+//                 hold_ms = how long the previous score keeps being used while an
+//                           async scorer reports pending (still computing). Past
+//                           it the input drops out of the scoring. No effect on
+//                           synchronous scorers that produce a value every cycle
+//                           (default 500ms)
+//                 - type is the name of a scorer in src/scorers/.
+//                   New judgment logic means adding one .cpp under src/scorers/
+//                   (copy external_score.cpp to start).
+//
+// -- Order in which influence values are filled (later wins) ------------
+//   1. defaults.influence in the yaml
+//   2. inputs[].influence           <- that input's default across all drives
+//   3. drives[].influence[input]    <- that single cell only
+//
+// -- influence fields ---------------------------------------------------
+//   weight     : W[j][i] of the linear layer. May be negative (penalty term).
+//                0 means no effect on the score - but veto still works
+//   exp_mix    : linear<->exponential blend. 0 = pure linear, 1 = pure
+//                exponential, 0.7 = 7 parts exponential : 3 parts linear
+//   exp_k      : exponential curvature. >0 convex ("only very good scores
+//                count"), <0 concave ("even slightly bad drops sharply")
+//   in_min/max : renormalize to the range of interest. e.g. in_min 0.6 =
+//                everything at or below 0.6 scores 0
+//   invert     : flips metrics where smaller is better
+//   veto_below : disqualifies the drive when the shaped, normalized value is
+//                below this (negative = off)
+//   required   : true disqualifies the drive when this input cannot judge
+//
+//   A bare number is shorthand for weight only (linear=1, exp=0).
+//     "localization": 1.0   ==   {"weight": 1.0, "exp_mix": 0.0}
+//
+// -- Units --------------------------------------------------------------
+//   All time values are in **ms** and the keys end in _ms.
+{
+  "inputs": [
+    {
+      // /localization_confidence from localization_pf.
+      // data = [stamp_sec, stamp_nanosec, confidence], so index 2; stamp is [0,1].
+      "name": "localization",
+      "type": "external_score",
+      "params": {
+        "topic": "/localization_confidence",
+        "mode": "scalar",
+        "index": 2,
+        "stamp_indices": [0, 1],
+        "timeout_ms": 500,
+        "input_min": 0.0,
+        "input_max": 1.0,
+        "invert": false,
+        "on_missing": "unavailable"
+      },
+      // Confidence at or below 0.6 is effectively untrustworthy, so in_min cuts
+      // it off, and the convex exponential (exp_k>0) punishes the low range further.
+      "influence": {"weight": 1.0, "exp_mix": 0.7, "exp_k": 2.5, "in_min": 0.6}
+    },
+
+    {
+      // Per-drive scores assigned by an external node.
+      // scripts/example_python_scorer.py publishes in this format.
+      "name": "external",
+      "type": "external_score",
+      "params": {
+        "topic": "/co_driver/external_scores",
+        "mode": "per_candidate",
+        // layout.dim[i].label takes precedence when present; this order is used otherwise.
+        "order": ["pp_main", "pp_left", "pp_right"],
+        "timeout_ms": 500,
+        "input_min": 0.0,
+        "input_max": 1.0,
+        "on_missing": "unavailable"
+      },
+      "influence": {"weight": 1.0, "exp_mix": 0.7, "exp_k": -3.0}
+    }
+
+    // Example async scorer that decouples heavy computation from the evaluation
+    // cycle. Copy src/scorers/example_async.cpp and put the real logic in.
+    // ,{
+    //   "name": "heavy",
+    //   "type": "example_async",
+    //   "hold_ms": 800,                                // reuse the previous score for up to 800ms
+    //   "params": {"rate_hz": 5.0, "work_ms": 30.0},
+    //   "influence": {"weight": 1.0}
+    // }
+  ],
+
+  // -- hold_ms - how long the last command stays trusted ------------------
+  // The only per-drive time setting. Past it the drive goes **inactive**: its
+  // score is still computed (for diagnostics) but it drops out of the softmax,
+  // the ranking and the selection. Only live topics compete.
+  //
+  // Topics with different Hz each get their own value. Rule of thumb: 3-5
+  // times that topic's period:
+  //   100Hz(10ms) -> 30~50 / 20Hz(50ms) -> 150~250 / 5Hz(200ms) -> 600~1000
+  // The measured Hz shows up as hz in the status; use that to pick a value.
+  "drives": [
+    {
+      "name": "pp_main",
+      "topic": "/drive_main",
+      "hold_ms": 300,
+      "bias": 0.02,                 // b_j of the linear layer. Prefers the main raceline on ties
+      "enabled": true,
+      "influence": {
+        // Make the main raceline especially sensitive to localization
+        // confidence (stronger exponential component)
+        "localization": {"weight": 1.2, "exp_mix": 0.7, "exp_k": -3.0, "in_min": 0.6}
+      }
+    },
+
+    {
+      "name": "pp_left",
+      "topic": "/drive_left",
+      "hold_ms": 300,
+      "bias": 0.0,
+      "enabled": true
+    },
+
+    {
+      "name": "pp_right",
+      "topic": "/drive_right",
+      "hold_ms": 300,
+      "bias": 0.0,
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+[
+  {
+    "trial": "all_enabled",
+    "wall_s": 4.096104483003728,
+    "sim_s": 1.2330000585643575,
+    "realtime_factor": 0.30101772639846874,
+    "physics_steps": 1233,
+    "render_frames": 74,
+    "components": {
+      "motor": {
+        "calls": 1283,
+        "wall_s": 0.06773864295246312
+      },
+      "steering": {
+        "calls": 1283,
+        "wall_s": 0.012999942882743198
+      },
+      "lidar": {
+        "calls": 1283,
+        "wall_s": 1.0430401150661055
+      },
+      "imu": {
+        "calls": 1283,
+        "wall_s": 0.737504869888653
+      },
+      "ros_vesc_clock": {
+        "calls": 64,
+        "wall_s": 0.0034260719985468313
+      },
+      "ros_spin": {
+        "calls": 77,
+        "wall_s": 0.06954809801391093
+      },
+      "status_files": {
+        "calls": 8,
+        "wall_s": 0.3165554219885962
+      }
+    }
+  },
+  {
+    "trial": "without_lidar",
+    "wall_s": 4.00538864400005,
+    "sim_s": 1.4830000704387203,
+    "realtime_factor": 0.3702512295929658,
+    "physics_steps": 1483,
+    "render_frames": 89,
+    "components": {
+      "motor": {
+        "calls": 1533,
+        "wall_s": 0.07946054006606573
+      },
+      "steering": {
+        "calls": 1533,
+        "wall_s": 0.015181531089183409
+      },
+      "lidar": {
+        "calls": 0,
+        "wall_s": 0.0
+      },
+      "imu": {
+        "calls": 1533,
+        "wall_s": 1.0747858320610248
+      },
+      "ros_vesc_clock": {
+        "calls": 77,
+        "wall_s": 0.0036291419964982197
+      },
+      "ros_spin": {
+        "calls": 92,
+        "wall_s": 0.08409431100153597
+      },
+      "status_files": {
+        "calls": 8,
+        "wall_s": 0.31706234199373284
+      }
+    }
+  },
+  {
+    "trial": "without_imu",
+    "wall_s": 4.0268781170016155,
+    "sim_s": 1.4500000688713044,
+    "realtime_factor": 0.3600804461275734,
+    "physics_steps": 1450,
+    "render_frames": 87,
+    "components": {
+      "motor": {
+        "calls": 1500,
+        "wall_s": 0.0781535980568151
+      },
+      "steering": {
+        "calls": 1500,
+        "wall_s": 0.01515636592375813
+      },
+      "lidar": {
+        "calls": 1500,
+        "wall_s": 1.2259244629967725
+      },
+      "imu": {
+        "calls": 0,
+        "wall_s": 0.0
+      },
+      "ros_vesc_clock": {
+        "calls": 75,
+        "wall_s": 0.0055798310349928215
+      },
+      "ros_spin": {
+        "calls": 90,
+        "wall_s": 0.08897401294234442
+      },
+      "status_files": {
+        "calls": 8,
+        "wall_s": 0.31980312900122954
+      }
+    }
+  },
+  {
+    "trial": "without_both_sensors",
+    "wall_s": 4.019112681002298,
+    "sim_s": 2.2170001053018495,
+    "realtime_factor": 0.5516143191956906,
+    "physics_steps": 2217,
+    "render_frames": 133,
+    "components": {
+      "motor": {
+        "calls": 2267,
+        "wall_s": 0.1194382388930535
+      },
+      "steering": {
+        "calls": 2267,
+        "wall_s": 0.02260114912496647
+      },
+      "lidar": {
+        "calls": 0,
+        "wall_s": 0.0
+      },
+      "imu": {
+        "calls": 0,
+        "wall_s": 0.0
+      },
+      "ros_vesc_clock": {
+        "calls": 113,
+        "wall_s": 0.008539547015971038
+      },
+      "ros_spin": {
+        "calls": 136,
+        "wall_s": 0.12036672196700238
+      },
+      "status_files": {
+        "calls": 8,
+        "wall_s": 0.32051174801017623
+      }
+    }
+  },
+  {
+    "trial": "without_sensors_or_status",
+    "wall_s": 4.007172231998993,
+    "sim_s": 2.400000113993883,
+    "realtime_factor": 0.5989261192291289,
+    "physics_steps": 2400,
+    "render_frames": 144,
+    "components": {
+      "motor": {
+        "calls": 2450,
+        "wall_s": 0.1273430549626937
+      },
+      "steering": {
+        "calls": 2450,
+        "wall_s": 0.024368940154090524
+      },
+      "lidar": {
+        "calls": 0,
+        "wall_s": 0.0
+      },
+      "imu": {
+        "calls": 0,
+        "wall_s": 0.0
+      },
+      "ros_vesc_clock": {
+        "calls": 123,
+        "wall_s": 0.00926092797453748
+      },
+      "ros_spin": {
+        "calls": 147,
+        "wall_s": 0.12828936903679278
+      },
+      "status_files": {
+        "calls": 0,
+        "wall_s": 0.0
+      }
+    }
+  }
+]

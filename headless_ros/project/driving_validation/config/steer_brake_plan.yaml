@@ -1,0 +1,8 @@
+# Static vehicle-response calibration shared by both PP controllers in an A/B.
+pp_limits_config: ppcontroller.yaml
+# Effective model value used for the exported steer_brake_profile.csv files.
+# PP feedforward gains are independently tunable controller parameters.
+understeer_rad_per_mps2: 0.020
+steering_reserve_fraction: 0.06
+brake_response_delay_s: 0.27
+infeasible_corner_speed_mps: 1.0

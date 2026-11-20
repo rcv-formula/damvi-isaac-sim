@@ -1,0 +1,389 @@
+// red_damvi wiring + arbitration parameters.
+//
+// One line: **when localization collapses, hand over to gap_follow; come back
+// only when it is fully healthy again.**
+//
+// This file owns everything that belongs to co_driver itself:
+//   - which inputs and drives exist, and where they listen (wiring)
+//   - the arbitration layer: weights W[j][i], bias b_j, response curves,
+//     veto placements, per-drive hold_ms
+//
+// How the localization score itself is computed (timeouts, missing-topic
+// policy, recovery-gate conditions) is the scorer's business and lives in
+// config/localization_scoring.jsonc, merged over this file at load.
+// Base settings (scoring / selection / postprocess) are in co_driver_red_damvi.yaml.
+{
+  "inputs": [
+    {
+      // /localization_confidence, published by both localization_pf and
+      // slam_ours (absolute name in both, no prefix).
+      //   std_msgs/Float64MultiArray, data = [stamp_sec, stamp_nanosec, confidence]
+      // localization_confidence rather than the generic external_score: this
+      // producer appends its five raw terms, and one of them (term_skip) is an
+      // obstacle meter rather than a pose-quality meter. See the ignore_terms
+      // note in localization_scoring.jsonc.
+      "name": "localization",
+      "type": "localization_confidence",
+      "params": {
+        "topic": "/localization_confidence",
+        "index": 2,
+        "stamp_indices": [0, 1],
+        "state_topic": "/localization_pf/state"
+      },
+      // Response curve, shared default for all drives (overridden per drive below).
+      // Fitted to measured confidence distributions (healthy-tracking p05 per
+      // scene: icra .877 / 0522-2 .867 / 0526-1 .530 / busan2 .361 - the
+      // thresholds must sit below the worst of them):
+      //   in_min 0.02 : at or below this, score 0 (localization is gone)
+      //   in_max 0.35 : at or above this, full marks (out of the danger band)
+      // With the weights below and switch_margin 0.15 the handover lands at
+      // confidence 0.171 falling / 0.226 rising. Re-fit if the producer's
+      // confidence formula changes.
+      "influence": {"weight": 0.0, "exp_mix": 1.0, "exp_k": 3.0, "in_min": 0.02, "in_max": 0.35}
+    },
+
+    {
+      // Localization state machine: 0=Lost (or waiting for map), 1=Converging,
+      // 2=Tracking. std_msgs/UInt8, latched, republished on transitions only.
+      // Used as a gate, not a score: Lost instantly disqualifies pp_main.
+      //
+      // Topic name is per-stack: the real car (localization_pf) uses
+      // /localization_pf/state, the slam_ours replay rig /slam_ours/state.
+      // Silence closes the gate, so a wrong name pins the car on gap_follow -
+      // loud and safe, never silently disabled.
+      "name": "loc_state",
+      "type": "localization_state",
+      // on_missing "value" is what makes the line above true. Left at its
+      // default, silence returns UNAVAILABLE, and an unavailable input is
+      // masked out of the drive's score before veto_below is ever tested - so
+      // a wrong topic name here deleted the gate instead of closing it. Read
+      // as a value, no state yet means the producer never reached map-ready,
+      // which is Lost, which is exactly what the gate is for.
+      "params": {"topic": "/localization_pf/state", "on_missing": "value",
+                 "default_score": 0.0}
+    },
+
+    {
+      // Early-degradation trip - the score curve saturates at in_max, so a
+      // localization hovering at 0.25-0.45 (quietly wrong, not collapsed)
+      // never reaches the score pathway's handover. This input watches the
+      // raw confidence and disqualifies pp_main when it stays below the trip
+      // bar for a sustained stretch (numbers in localization_scoring.jsonc).
+      // Engaged only while Tracking - Lost/Converging belong to the state
+      // veto and the recovery latch (a fresh attach legitimately sits below
+      // the trip bar and must not be gated here).
+      "name": "loc_trip",
+      "type": "confidence_trip",
+      "params": {
+        "topic": "/localization_confidence",
+        "index": 2,
+        "state_topic": "/localization_pf/state"
+      }
+    },
+
+    {
+      // TWO GEOMETRY CHECKS, TWO ROLES - do not collapse them.
+      //
+      //   clearance  the drive is commanding a path into solid geometry, so
+      //              its idea of where it is must be wrong. Leaving is fast,
+      //              coming back is reluctant (clear_ms 2000).
+      //   obstacles  the map is right and the raceline is right, something is
+      //              simply lying in the way. Leaving is fast, coming back is
+      //              prompt (clear_ms 700) - nothing was wrong with the drive.
+      //
+      // Same veto, different meaning, and therefore different patience about
+      // trusting pp_main again.
+      //
+      // Geometry check, independent of localization: project pp_main's own
+      // command along the commanded arc and see whether the live scan says
+      // something solid is in the way.
+      //
+      // This is the only detector that survives a confidently wrong pose. If
+      // global search attaches to the wrong branch of a fork, the straight
+      // walls still match and the disagreeing sector is masked out by the
+      // producer (zero particle consensus), so the whole disagreement lands in
+      // term_skip - which the score deliberately excludes to stay immune to
+      // passing vehicles. Confidence therefore reads healthy while the
+      // raceline controller steers into the wrong branch.
+      //
+      // Its parameters are vehicle geometry and stopping distance rather than
+      // localization tuning, so they sit here rather than in
+      // localization_scoring.jsonc. wheelbase and vehicle_half_width match
+      // gap_follow's own config (0.324 / 0.18).
+      "name": "clearance",
+      "type": "path_clearance",
+      "params": {
+        // Thresholds and timings live in obstacle_scoring.jsonc.
+        "topic": "/scan",
+        "vesc_state_topic": "/sensors/core"
+      }
+    },
+
+    {
+      // Obstacle avoidance. Which evidence it reads is set by `source` in
+      // obstacle_scoring.jsonc, and it now defaults to the raw scan rather
+      // than the detector's clusters - see that file for the measurement.
+      //
+      // On the scan source nothing is required of the detector at run time,
+      // and obstacle_context_msgs is still needed at build time because the
+      // cluster source is still there to fall back to.
+      //
+      // Whatever the source, silence NEVER reports unavailable: it reports a
+      // clear path, and says so in the log. Unavailable would drop the input
+      // out of the score, and with missing:mask that rescales the logit by the
+      // weights that were usable - silently moving the calibrated localization
+      // thresholds every time a producer is not running.
+      //
+      // gap_obs carries this at -2.0 so that a detour is its own candidate.
+      // pp_main carries a veto_below at 0.15 here; obstacle_scoring.jsonc adds
+      // the identical safety veto to gap_loc so a committed obstacle leaves
+      // gap_obs as the only valid reactive candidate. That tuning file also
+      // sets reference_drive=pp_main: when VESC is stale, all candidates judge
+      // obstacle geometry from one live pp command instead of changing the
+      // answer according to each candidate's commanded speed and steering.
+      //
+      // Trusted fields only: the detector measures its cluster geometry at
+      // 0.77 cm inter-scan residual, but its motion estimates read 1-4 m/s on
+      // static objects while driving, so speed / velocity / motion_label are
+      // all ignored. See the header of src/scorers/obstacle_avoid.cpp.
+      //
+      // The knob here is a distance along the path, not a braking margin:
+      // this fires on objects worth going around, while path_clearance asks
+      // the last-moment question of whether there is still room. Neither is
+      // tuned on track yet, and they should be tuned together, since a false
+      // positive in either hands the car over.
+      "name": "obstacles",
+      "type": "obstacle_avoid",
+      "params": {
+        // Everything else - corridor, trigger and commit geometry, jitter
+        // model, presence window, holds - lives in obstacle_scoring.jsonc.
+        "topic": "/obstacle_clusters",
+        "vesc_state_topic": "/sensors/core",
+        "path_topic": "/Path",
+        "path_transient_local": false,
+        "path_csv": "",
+        "path_frame": "map",
+        "base_frame": "base_link"
+      }
+    },
+
+    {
+      // Cross-track gate. The map controller steers toward the planned line,
+      // which is only sane while the car is near it. After hitting the
+      // obstacle that sits on the line in the 0814 recording, the car carried
+      // on through where the map says wall - and from there "drive back to the
+      // raceline" points across whatever it is stuck against. Only the
+      // reactive controller can get out of that.
+      //
+      // Not a localization check: confidence stays high while the pose is
+      // right and the car is simply in the wrong place. Nothing else notices.
+      "name": "off_path",
+      "type": "path_deviation",
+      "params": {
+        // Thresholds and timings live in obstacle_scoring.jsonc.
+        "path_topic": "/Path",
+        "path_transient_local": false,
+        "base_frame": "base_link"
+      }
+    },
+
+    {
+      // Corner hold - the return waits until the car is out of a slow corner.
+      //
+      // Handing the car back is a change of who is steering, and mid-corner is
+      // the worst moment for one: the two controllers disagree most where the
+      // line curves, the grip is already spoken for, and the handover blend
+      // spends 100 ms somewhere between the two commands.
+      //
+      // The plan says where it is slow (its own speed, in the z of each pose),
+      // and the map controller's command says whether it is mid-turn. Both
+      // have to be true - a slow section it would drive straight through is
+      // not a corner it can get wrong, and a big steering angle where the plan
+      // is fast is just a correction on a straight.
+      "name": "corner",
+      "type": "corner_hold",
+      "params": {
+        // Thresholds and timings live in obstacle_scoring.jsonc.
+        "path_topic": "/Path",
+        "path_transient_local": false,
+        "base_frame": "base_link"
+      }
+    },
+
+    {
+      // Return latch - keeps pp_main out until localization has been fully
+      // healthy for a sustained stretch (conditions in localization_scoring.jsonc).
+      "name": "recovery",
+      "type": "recovery_gate",
+      "params": {
+        "confidence_topic": "/localization_confidence",
+        "confidence_index": 2,
+        "state_topic": "/localization_pf/state"
+      }
+    }
+  ],
+
+  // hold_ms = how long the last command stays trusted (~3-5x the topic period).
+  // Past it the drive goes inactive and drops out of ranking and selection.
+  "drives": [
+    {
+      // PPcontroller - map and raceline based; needs localization to mean anything
+      "name": "pp_main",
+      "topic": "/drive_main",
+      // 450 ms, raised from 300. PPcontroller publishes at 100 Hz, but on the
+      // 0813 run it dropped out five times for 305-335 ms - just past a 300 ms
+      // hold, which disqualified a controller that was alive and handed the
+      // car to gap_follow for no reason. 450 ms clears the worst measured gap
+      // by ~115 ms and still catches a genuinely dead controller inside half a
+      // second.
+      "hold_ms": 450,
+      // 0.0, and it stays 0.0. It was -4.5 to cancel what the obstacle input
+      // added when the path was clear, which welded obstacle tuning to the
+      // localization calibration: touching either number moved every handover
+      // threshold. The obstacle demand now drives its own candidate instead,
+      // so this drive's logit is 3.0 x phi(confidence) and nothing else.
+      "bias": 0.0,
+      "enabled": true,
+      "influence": {
+        // W = +3.0: full confidence -> z = 3.0, zero confidence -> z = 0.0
+        "localization": {"weight": 3.0, "exp_mix": 1.0, "exp_k": 3.0, "in_min": 0.02, "in_max": 0.35},
+        // Lost (or silence) disqualifies pp_main outright; weight 0 = veto only
+        "loc_state": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.25,
+                      // Silence has to CLOSE this gate, and veto_below alone
+                      // cannot do it: an input with no message is unavailable,
+                      // and an unavailable input is masked out before the
+                      // veto_below test is ever reached. So a wrong topic name
+                      // here used to delete the gate rather than close it -
+                      // the exact opposite of what the line below claims, and
+                      // the failure mode a gate exists to prevent. `required`
+                      // is the one that acts on absence.
+                      "required": true,
+                      // `required` covers only what on_missing above does not:
+                      // an out-of-range state byte, which is still reported as
+                      // unavailable. Absence is handled by on_missing now, so
+                      // veto_below is what actually closes the gate on silence.
+                      //
+                      // The last resort may drive past this one. It says the
+                      // map controller is not the right choice, not that its
+                      // command is unsafe - and with no localization there is
+                      // usually nothing else left to choose.
+                      "last_resort_ok": true},
+        // early-degradation trip (see localization_scoring.jsonc); veto only
+        "loc_trip": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.5,
+                     "last_resort_ok": true},
+        // return latch (see localization_scoring.jsonc); weight 0 = veto only
+        // Steppable for the same reason as loc_state: it is waiting for
+        // localization to prove itself, and if localization never starts there
+        // is nothing to wait for and nothing else to drive.
+        "recovery": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.5,
+                     "last_resort_ok": true},
+        // Same shape as the other gates: no weight, so the calibrated
+        // localization thresholds are untouched, and a veto only on the drive
+        // that needs the line to mean anything.
+        // Steppable: it says the moment is wrong, not that the command is.
+        // With nothing else left to drive, a corner is not a reason to stop.
+        "corner": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.5,
+                   "last_resort_ok": true},
+        // NOT steppable, and neither is obstacles below. These two do not say
+        // "another drive would be better", they say this command drives at
+        // something - into an object, or across whatever the car ended up
+        // against after leaving the line. Stopping is the right answer there
+        // even when it is the only command left.
+        "off_path": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.5},
+        // geometry veto: the commanded path runs into something solid.
+        // Only pp_main carries this path_clearance veto. This is separate from
+        // the obstacles safety veto shared by pp_main and gap_loc; applying
+        // path_clearance itself to every candidate would leave nothing to
+        // drive with and fall through to timeout_stop.
+        // VETO DISABLED (-1 = off). Measured on the vehicle: path_clearance
+        // disqualified pp_main in 216 of 522 status samples - 41% of the run -
+        // while the same scorer fired ZERO times across the whole 0813 replay.
+        // A gate that quiet in replay and that loud on the car is not measuring
+        // what it claims to. It is also known-broken: the arc projection
+        // normalised the sweep angle for a left turn only, so on every
+        // right-hand turn it saw nothing at all and reported "clear" rather
+        // than "no data" - meaning even the 41% is half-blind.
+        //
+        // It stays wired and keeps reporting, so its distance still appears in
+        // the status and the RViz markers and can be judged against what the
+        // car actually did. It just cannot disqualify a drive until the
+        // geometry is fixed AND validated against a vehicle recording.
+        "clearance": {"weight": 0.0, "exp_mix": 0.0, "veto_below": -1.0},
+        // A gate here, nothing more. "There is an object on the line I am
+        // about to drive" is a fact, and facts are not put to a vote against
+        // how well the car knows where it is - which is what giving this a
+        // weight did. The preference for going around it lives on gap_obs.
+        "obstacles": {"weight": 0.0, "exp_mix": 0.0, "veto_below": 0.15}
+      }
+    },
+    {
+      // The fallback, entered because localization is not good enough to
+      // follow a map. Sticky on purpose: confidence wanders near its
+      // threshold, and trading the car back and forth across that is the
+      // failure the cooldown exists to prevent.
+      "name": "gap_loc",
+      "topic": "/drive_gf",
+      "hold_ms": 500,
+      // 500, not 1500. The recovery latch already refuses to give the map
+      // controller back until localization has been healthy for 2500 ms, and
+      // that is a strictly stronger guard than a timer - it checks the thing
+      // that went wrong. Charging both meant the return after a genuine
+      // localization dip carried a tail of dead time: measured over the parts
+      // of the 0814 lap where no obstacle is even visible yet, 9.7% of samples
+      // were sitting out this cooldown with pp_main already fit to drive.
+      //
+      // For the marginal case the latch does not arm on - confidence wobbling
+      // near the threshold without dropping under 0.35 - the deadband
+      // (0.171 out, 0.226 back) and the logit EMA are the guards, as they were
+      // before this number existed.
+      "keep_ms": 500,
+      "bias": 1.0,
+      "enabled": true,
+      "influence": {
+        "localization": {"weight": -1.5, "exp_mix": 1.0, "exp_k": 3.0, "in_min": 0.02, "in_max": 0.35}
+      }
+    },
+    {
+      // The obstacle-specific fallback, entered because an object is on the
+      // planned line. Its controller is launched externally on /drive_gf2;
+      // unlike gap_loc this is a real command-source change, so moving to or
+      // from it arms switch_blend and observes the incumbent's keep_ms.
+      //
+      // The obstacle input enters NEGATIVELY on clearness: a clear path is
+      // -1.7 with the bias, putting this candidate well below the others, and
+      // +0.3 at full demand, comfortably above gap_loc's -0.5. The span is kept small deliberately -
+      // the logit is EMA-smoothed, so a wider one just means this candidate
+      // takes longer to catch up once an obstacle appears. So it wins exactly when there is
+      // something to go around and localization is fine, and yields to gap_loc
+      // when localization is the real problem.
+      "name": "gap_obs",
+      "topic": "/drive_gf2",
+      // FlySky /rf is std_msgs/UInt16MultiArray. Channel numbers here are
+      // one-based like the transmitter labels: CH10 is data[9]. At the 2000
+      // endpoint gap_obs keeps its obstacle-specific gap follower; at 1000 it
+      // uses the same /drive_gf command as gap_loc. Values around neither
+      // endpoint retain the current source, so a noisy/mid-position sample
+      // cannot flip the controller. A source edge discards the old command and
+      // waits for a fresh message from the newly selected topic.
+      "runtime_topic_switch": {
+        "selector_topic": "/rf",
+        "channel": 10,
+        "primary_value": 2000,
+        "alternate_value": 1000,
+        "tolerance": 100,
+        "alternate_topic": "/drive_gf"
+      },
+      "hold_ms": 500,
+      "keep_ms": 400,
+      // A small positive bias so that once there IS demand this candidate is
+      // clearly ahead of gap_loc rather than a hair in front. Otherwise the
+      // localization fallback can win while the EMA catches up, delaying the
+      // move to the obstacle-specific controller.
+      "bias": 0.3,
+      "enabled": true,
+      "influence": {
+        "obstacles": {"weight": -2.0, "exp_mix": 0.0}
+      }
+    }
+  ]
+}

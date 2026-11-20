@@ -1,0 +1,185 @@
+{
+  "status": "running",
+  "stage": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/rc_car_scene_with_0821.usd",
+  "gui_session": true,
+  "mode": "ros",
+  "elapsed": 52.23500248102937,
+  "ros_connected": true,
+  "error": null,
+  "target_erpm": 0.0,
+  "original_joint_friction": {
+    "FL": 0.0,
+    "FR": 0.0,
+    "RL": 0.0,
+    "RR": 0.0
+  },
+  "latest": {
+    "time": 52.21900248026941,
+    "erpm": 0.20646820292886578,
+    "target_erpm": 0.0,
+    "current_a": 0.004508030137011508,
+    "position": [
+      -0.42375823855400085,
+      0.004479869268834591,
+      0.06994404643774033
+    ],
+    "velocity": [
+      2.6314401111449115e-05,
+      0.001132393954321742,
+      0.004468995146453381
+    ],
+    "orientation_xyzw": [
+      4.8746987886261195e-06,
+      -4.416991214384325e-05,
+      0.04139452427625656,
+      0.9991428852081299
+    ],
+    "angular_velocity_rad_s": [
+      -0.013082550838589668,
+      -0.0008849833975546062,
+      -8.517833339283243e-05
+    ],
+    "wheel_omega": [
+      0.00042112404480576515,
+      0.006394879426807165,
+      0.0012541955802589655,
+      0.0111487852409482
+    ],
+    "mode": "ros",
+    "steering_input_rad": 0.0,
+    "steering_center_target_rad": 0.014131439965515085,
+    "steering_target_left_right_rad": [
+      0.014211767684555654,
+      0.014052015139654785
+    ],
+    "steering_actual_left_right_rad": [
+      0.014266988262534142,
+      0.014082836918532848
+    ]
+  },
+  "config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/vesc_sim.yaml",
+  "config_sha256": "7d6ca4ef9ef02405b76e720b5908841cf9fac96f3d3be315c86c50937699f8d3",
+  "config_load_count": 4,
+  "speed_to_erpm_gain": 1538.0,
+  "custom_ui": false,
+  "steering_config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/steering.yaml",
+  "steering_config_sha256": "7588dec2d124f1f4150489c7f32ad4464e511f487e89398177040bda2450bf3a",
+  "steering_geometry": {
+    "wheelbase_m": 0.25,
+    "front_track_m": 0.2,
+    "mass_added_kg": 0.0,
+    "steering_dofs": [
+      "Steer_FL",
+      "Steer_FR"
+    ]
+  },
+  "lidar": {
+    "enabled": true,
+    "backend": "PhysX collision raycast",
+    "model": "Hokuyo UST-10LX",
+    "config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/lidar.yaml",
+    "topic": "/scan",
+    "frame_id": "laser",
+    "base_frame": "base_link",
+    "mount_translation_m": [
+      0.27,
+      0.0,
+      0.16
+    ],
+    "mount_rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "scan_rate_hz": 40.0,
+    "sample_count": 1081,
+    "published_count": 5971,
+    "latest": {
+      "stamp": 52.19400000090056,
+      "sample_count": 1081,
+      "finite_returns": 1081,
+      "min_range_m": 0.9478158354759216,
+      "max_range_m": 13.942082405090332
+    },
+    "last_update_wall_time_s": 0.0009700939990580082
+  },
+  "imu": {
+    "enabled": true,
+    "topic": "/imu/data",
+    "frame_id": "imu",
+    "sample_rate_hz": 1000.0,
+    "physics_hz": 1000.0,
+    "published_count": 149301,
+    "dropped_count": 0,
+    "clock_reset_count": 0,
+    "mount_from_chassis_m": [
+      0.17,
+      0.0,
+      0.017939999999999998
+    ],
+    "center_of_mass_offset_m": [
+      -0.003225806402042508,
+      0.0,
+      0.005427096970379353
+    ],
+    "last_update_wall_s": 0.0005002010002499446,
+    "last_sample": {
+      "stamp": 52.23500248102937,
+      "orientation_xyzw": [
+        6.832455190567856e-06,
+        -4.5825468550014694e-05,
+        0.04139458721104369,
+        0.9991428756704276
+      ],
+      "angular_velocity_rad_s": [
+        -0.010123983251430121,
+        0.0005849511307758431,
+        0.0001250804418297662
+      ],
+      "linear_acceleration_m_s2": [
+        -0.030146299832266195,
+        1.9092272151693452,
+        9.784397481238443
+      ]
+    }
+  },
+  "tf": {
+    "config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/tf.yaml",
+    "config_sha256": "160b4a5127ed17d036f3e8161ca2053a65ed8d3778e5492ab6da831760ff675c",
+    "base_frame": "base_link",
+    "publish_static_tf": true,
+    "transforms": [
+      {
+        "parent": "base_link",
+        "child": "laser",
+        "translation_m": [
+          0.27,
+          0.0,
+          0.16
+        ],
+        "rotation_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "parent": "base_link",
+        "child": "imu",
+        "translation_m": [
+          0.27,
+          0.0,
+          0.06
+        ],
+        "rotation_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

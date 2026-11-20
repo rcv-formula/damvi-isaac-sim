@@ -1,0 +1,42 @@
+# 200 Hz normal-contact + C99 tangential tire model, validated in headless PhysX.
+# Baseline peak coefficients are multiplied by the one constant surface profile.
+# Dataset surface coefficients are edited in surface_friction.yaml.
+enabled: true
+native_contact_material: /World/Looks/TireContact
+model: implicit_combined_slip
+calibration_status: effective_response_calibrated_headless_200hz
+normal_load_source: measured_ground_contact_force
+require_zero_native_tire_road_friction: true
+wheel_radius_m: 0.02794
+wheel_axial_inertia_kg_m2: 2.9274135e-05
+vehicle_mass_kg: 3.5
+vehicle_yaw_inertia_kg_m2: 0.04712
+vehicle_inertia_diagonal_kg_m2:
+- 0.02094722
+- 0.04407683
+- 0.04712
+wheel_contact_z_m: -0.07
+front_axle_x_m: 0.15
+rear_axle_x_m: -0.1
+front_track_m: 0.2
+rear_track_m: 0.23
+slip_speed_floor_mps: 0.25
+stiffness_load_exponent: 1.0
+longitudinal_relaxation_length_m: 0.0
+lateral_relaxation_length_m: 0.0
+front:
+  reference_normal_load_n: 6.867
+  longitudinal_stiffness_n: 100.0
+  lateral_stiffness_n_per_rad: 51.55015
+  friction_longitudinal: 0.8
+  friction_lateral: 0.5231599
+rear:
+  reference_normal_load_n: 10.3005
+  longitudinal_stiffness_n: 100.0
+  lateral_stiffness_n_per_rad: 387.10305
+  friction_longitudinal: 0.8
+  friction_lateral: 0.5231599
+normal_load_filter_time_constant_s: 0.0
+contact_response_bound: full_spatial
+surface_configuration: surface_friction.yaml
+calibration_report: ../calibration/dynamic_20261119/final_report.md

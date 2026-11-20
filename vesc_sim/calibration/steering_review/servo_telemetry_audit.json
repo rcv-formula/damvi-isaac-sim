@@ -1,0 +1,101 @@
+{
+  "servo_input_topic": "/commands/servo/position",
+  "servo_post_clipping_echo_topic": "/sensors/servo_position_command",
+  "meaning": "The echo is the commanded PWM position after driver clipping, not a measured shaft/wheel angle.",
+  "normalized_limits": [
+    0.15,
+    0.85
+  ],
+  "nominal_gain_observed": 0.52,
+  "nominal_offset_observed": 0.5,
+  "nominal_limit_rad": 0.673076923076923,
+  "driver_source": "/home/shin/Desktop/DAMVI/src/damvi_ws/f1tenth_system/vesc/vesc_driver/src/vesc_driver.cpp",
+  "checked_out_parameter_sign_note": "The checked-out vesc.yaml currently says -0.52; these recorded commands agree with +0.52. Recorded behavior is authoritative for this fit.",
+  "recordings": [
+    {
+      "bag": "0821_test_2_0",
+      "source_mcap": "/home/shin/Desktop/red-damvi dataset/0821/test_2_0.mcap",
+      "telemetry_count": 4159,
+      "receipt_matched_within_10ms": 4159,
+      "observed_min_max_normalized": [
+        0.15,
+        0.85
+      ],
+      "fraction_equal_to_clipped_command_within_1e_6": 1.0,
+      "abs_difference_to_clipped_command_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "bag": "0821-1_test_3_0",
+      "source_mcap": "/home/shin/Desktop/red-damvi dataset/0821-1/test_3_0.mcap",
+      "telemetry_count": 42530,
+      "receipt_matched_within_10ms": 42403,
+      "observed_min_max_normalized": [
+        0.15,
+        0.85
+      ],
+      "fraction_equal_to_clipped_command_within_1e_6": 1.0,
+      "abs_difference_to_clipped_command_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "bag": "last_7_last_7_0",
+      "source_mcap": "/home/shin/Desktop/red-damvi dataset/ifac/last_7/last_7_0.mcap",
+      "telemetry_count": 23923,
+      "receipt_matched_within_10ms": 23923,
+      "observed_min_max_normalized": [
+        0.15,
+        0.85
+      ],
+      "fraction_equal_to_clipped_command_within_1e_6": 0.9998327968900221,
+      "abs_difference_to_clipped_command_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.006656000316143051
+      ]
+    },
+    {
+      "bag": "test_38_test_38_0",
+      "source_mcap": "/home/shin/Desktop/red-damvi dataset/ifac1/test_38/test_38_0.mcap",
+      "telemetry_count": 46854,
+      "receipt_matched_within_10ms": 46853,
+      "observed_min_max_normalized": [
+        0.15,
+        0.85
+      ],
+      "fraction_equal_to_clipped_command_within_1e_6": 0.9998932832476042,
+      "abs_difference_to_clipped_command_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.35665600031614303
+      ]
+    },
+    {
+      "bag": "last_14_last_14_0",
+      "source_mcap": "/home/shin/Desktop/red-damvi dataset/ifac2/last_14/last_14_0.mcap",
+      "telemetry_count": 6435,
+      "receipt_matched_within_10ms": 6435,
+      "observed_min_max_normalized": [
+        0.15,
+        0.85
+      ],
+      "fraction_equal_to_clipped_command_within_1e_6": 1.0,
+      "abs_difference_to_clipped_command_quantiles": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ]
+}

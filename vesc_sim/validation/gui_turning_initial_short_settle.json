@@ -1,0 +1,42 @@
+{
+  "status": "fail",
+  "checks": {
+    "clock_completed": true,
+    "all_phases": true,
+    "forward_erpm": true,
+    "reverse_erpm": true,
+    "forward_left_yaw": true,
+    "reverse_right_yaw": true,
+    "physical_translation": true,
+    "stopped": false,
+    "steering_tracks_under_load": true,
+    "scan_while_driving": true,
+    "scan_period_40hz": true,
+    "no_gui_error": true
+  },
+  "phases": {
+    "forward": {
+      "samples": 23,
+      "median_erpm": 1155.1208400339317,
+      "median_speed_mps": 0.7433512516872095,
+      "median_yaw_rate_rad_s": 0.40561866760253906,
+      "max_steering_error_deg": 0.12069981198430692
+    },
+    "reverse": {
+      "samples": 23,
+      "median_erpm": -1144.7752415685652,
+      "median_speed_mps": 0.7382657846253219,
+      "median_yaw_rate_rad_s": -0.41417592763900757,
+      "max_steering_error_deg": 0.12999116779511838
+    },
+    "stop": {
+      "samples": 23,
+      "median_erpm": -32.30043251685858,
+      "median_speed_mps": 0.022161600463808155,
+      "median_yaw_rate_rad_s": -0.0017959194956347346,
+      "max_steering_error_deg": 0.0716849691894989
+    }
+  },
+  "scans_received": 200,
+  "wall_duration_s": 16.71324996399926
+}

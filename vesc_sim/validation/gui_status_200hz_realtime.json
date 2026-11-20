@@ -1,0 +1,201 @@
+{
+  "status": "running",
+  "stage": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/rc_car_scene_with_0821.usd",
+  "gui_session": true,
+  "mode": "ros",
+  "elapsed": 252.8749943478033,
+  "ros_connected": true,
+  "error": null,
+  "target_erpm": 0.0,
+  "original_joint_friction": {
+    "FL": 0.0,
+    "FR": 0.0,
+    "RL": 0.0,
+    "RR": 0.0
+  },
+  "latest": {
+    "time": 252.8649943480268,
+    "erpm": -0.5704114749042876,
+    "target_erpm": 0.0,
+    "current_a": -0.0027469207369352116,
+    "position": [
+      -0.4161086976528168,
+      -0.1519087553024292,
+      0.0697304829955101
+    ],
+    "velocity": [
+      0.0015130821848288178,
+      -0.0022856518626213074,
+      0.02090688981115818
+    ],
+    "orientation_xyzw": [
+      8.550585334887728e-05,
+      -0.0002129143540514633,
+      0.25540444254875183,
+      0.9668342471122742
+    ],
+    "angular_velocity_rad_s": [
+      0.026899801567196846,
+      0.021210672333836555,
+      -0.00042679437319748104
+    ],
+    "wheel_omega": [
+      -0.01081724651157856,
+      0.0026234397664666176,
+      -0.03999873250722885,
+      -0.004903913475573063
+    ],
+    "mode": "ros",
+    "steering_input_rad": 0.0,
+    "steering_center_target_rad": 0.014131439965515013,
+    "steering_target_left_right_rad": [
+      0.01421176768455558,
+      0.014052015139654712
+    ],
+    "steering_actual_left_right_rad": [
+      0.012320384383201599,
+      0.011448338627815247
+    ]
+  },
+  "config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/vesc_sim.yaml",
+  "config_sha256": "b6a65c79636ec3632c37f9c41503347c489e9ccf1079d992ab1181d3cc9f6b28",
+  "config_load_count": 3,
+  "speed_to_erpm_gain": 1538.0,
+  "custom_ui": false,
+  "steering_config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/steering.yaml",
+  "steering_config_sha256": "7588dec2d124f1f4150489c7f32ad4464e511f487e89398177040bda2450bf3a",
+  "steering_geometry": {
+    "wheelbase_m": 0.25,
+    "front_track_m": 0.2,
+    "mass_added_kg": 0.0,
+    "steering_dofs": [
+      "Steer_FL",
+      "Steer_FR"
+    ]
+  },
+  "lidar": {
+    "enabled": true,
+    "backend": "physics_core",
+    "requested_backend": "physics_core",
+    "model": "Hokuyo UST-10LX",
+    "config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/lidar.yaml",
+    "topic": "/scan",
+    "frame_id": "laser",
+    "base_frame": "base_link",
+    "mount_translation_m": [
+      0.27,
+      0.0,
+      0.16
+    ],
+    "mount_rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "scan_rate_hz": 40.0,
+    "sample_count": 1081,
+    "published_count": 18309,
+    "latest": {
+      "stamp": 252.84499999903454,
+      "sample_count": 1081,
+      "finite_returns": 1081,
+      "min_range_m": 1.0343413352966309,
+      "max_range_m": 13.931126594543457
+    },
+    "last_update_wall_time_s": 0.0019179260052624159
+  },
+  "imu": {
+    "enabled": true,
+    "topic": "/imu/data",
+    "frame_id": "imu",
+    "sample_rate_hz": 1000.0,
+    "sampling_mode": "interpolated_physics_state",
+    "interpolated_physics_states": true,
+    "interpolated_sample_count": 457733,
+    "last_batch_published": 5,
+    "physics_hz": 200.0,
+    "published_count": 457735,
+    "dropped_count": 0,
+    "clock_reset_count": 0,
+    "mount_from_chassis_m": [
+      0.17,
+      0.0,
+      0.017939999999999998
+    ],
+    "center_of_mass_offset_m": [
+      -0.003225806402042508,
+      0.0,
+      0.005427096970379353
+    ],
+    "last_update_wall_s": 0.0009385879966430366,
+    "last_sample": {
+      "stamp": 252.87399999899418,
+      "orientation_xyzw": [
+        7.750115860749528e-05,
+        -0.00021535251293764053,
+        0.25540455524253797,
+        0.9668342467963301
+      ],
+      "angular_velocity_rad_s": [
+        0.0218862534459989,
+        0.005196692402775967,
+        -0.00028979332813822514
+      ],
+      "linear_acceleration_m_s2": [
+        0.012709526856864311,
+        -1.2679492737359466,
+        9.814873919405406
+      ]
+    }
+  },
+  "tf": {
+    "config_path": "/home/shin/\ubc14\ud0d5\ud654\uba74/RC_Car_Isaac/vesc_sim/config/tf.yaml",
+    "config_sha256": "160b4a5127ed17d036f3e8161ca2053a65ed8d3778e5492ab6da831760ff675c",
+    "base_frame": "base_link",
+    "publish_static_tf": true,
+    "transforms": [
+      {
+        "parent": "base_link",
+        "child": "laser",
+        "translation_m": [
+          0.27,
+          0.0,
+          0.16
+        ],
+        "rotation_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "parent": "base_link",
+        "child": "imu",
+        "translation_m": [
+          0.27,
+          0.0,
+          0.06
+        ],
+        "rotation_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    ]
+  },
+  "physics_hz": 200,
+  "realtime_factor": 0.9968245871790624,
+  "runtime": {
+    "physics_worker_threads": 0,
+    "broadphase": "MBP",
+    "render_hz": 30.0,
+    "min_frame_rate": 20.0,
+    "realtime_wall_clock": true,
+    "status_interval_s": 1.0,
+    "trace_snapshot_interval_s": 0.0
+  }
+}

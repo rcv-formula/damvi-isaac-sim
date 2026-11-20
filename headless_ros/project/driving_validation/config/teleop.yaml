@@ -1,0 +1,12 @@
+damvi_teleop_ui:
+  ros__parameters:
+    input_topic: /autonomy/cmd_vel
+    output_topic: /cmd_vel
+    output_type: twist
+    manual_speed: 0.7
+    max_steering_angle: 0.673076923076923
+    publish_rate: 50.0
+    auto_timeout: 0.3
+    # Headless operator only. Acceleration ceiling after Stop -> Auto.
+    launch_acceleration_mps2: 1.5
+    frame_id: base_link
